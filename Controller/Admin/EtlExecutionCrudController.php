@@ -38,7 +38,7 @@ class EtlExecutionCrudController extends AbstractCrudController
             ->setPageTitle("index", "Etl Executions")
             ->setDateTimeFormat('dd/MM/y - HH:mm:ss')
             ->setSearchFields(["name", "id"])
-            ->setDefaultSort(['endTime' => 'DESC']);
+            ->setDefaultSort(['startTime' => 'DESC']);
     }
 
     public function configureFields(string $pageName): iterable

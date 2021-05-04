@@ -1,10 +1,20 @@
 # PHP Etl Bundle
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/oliverde8/phpEtlBundle/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/oliverde8/phpEtlBundle/?branch=main)
+[![Build Status](https://scrutinizer-ci.com/g/oliverde8/phpEtlBundle/badges/build.png?b=main)](https://scrutinizer-ci.com/g/oliverde8/phpEtlBundle/build-status/main)
+[![Code Coverage](https://scrutinizer-ci.com/g/oliverde8/phpEtlBundle/badges/coverage.png?b=main)](https://scrutinizer-ci.com/g/oliverde8/phpEtlBundle/?branch=main)
+[![Latest Stable Version](https://poser.pugx.org/oliverde8/php-etl-bundle/v)](//packagist.org/packages/oliverde8/php-etl-bundle) 
+[![Total Downloads](https://poser.pugx.org/oliverde8/php-etl-bundle/downloads)](//packagist.org/packages/oliverde8/php-etl-bundle) 
+[![Latest Unstable Version](https://poser.pugx.org/oliverde8/php-etl-bundle/v/unstable)](//packagist.org/packages/oliverde8/php-etl-bundle) 
+[![License](https://poser.pugx.org/oliverde8/php-etl-bundle/license)](//packagist.org/packages/oliverde8/php-etl-bundle)
+
 The Php etl bundle allows the usage of [Oliver's PHP Etl](https://github.com/oliverde8/php-etl) library in symfony. 
-Add's an integration to easy admin as well in order to see a list of the executions
+Add's an integration to easy admin as well in order to see a list of the executions:
+
 ![List of etl executions](docs/etl-execution-list.png)
 
-And also a details on each execution
+And also a details on each execution:
+
 ![List of etl executions](docs/etl-execution-details.png)
 
 ## Installation
