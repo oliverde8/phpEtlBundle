@@ -1,0 +1,22 @@
+{
+  "name": "oliverde8/comfy-easy-admin-bundle",
+  "type": "library",
+  "description": "Add interfaces to edit comfy configurations in easy admin.",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Oliver de Cramer",
+      "homepage": "http://oliver-decramer.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.4.0",
+    "oliverde8/php-etl": "^V0.3.0",
+    "easycorp/easyadmin-bundle": "^3.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Oliverde8\\PhpEtlBundle\\": "."
+    }
+  }
+}

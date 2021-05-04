@@ -1,0 +1,27 @@
+services:
+  Oliverde8\Component\PhpEtl\Builder\Factories\Transformer\RuleTransformFactory:
+    class: Oliverde8\Component\PhpEtl\Builder\Factories\Transformer\RuleTransformFactory
+    autowire: true
+    arguments:
+      $operation: 'rule-engine-transformer'
+      $class: 'Oliverde8\Component\PhpEtl\ChainOperation\Transformer\RuleTransformOperation'
+    tags:
+      - { name: etl.operation-factory }
+
+  Oliverde8\Component\PhpEtl\Builder\Factories\Grouping\SimpleGroupingFactory:
+    class: Oliverde8\Component\PhpEtl\Builder\Factories\Grouping\SimpleGroupingFactory
+    autowire: true
+    arguments:
+      $operation: 'simple-grouping'
+      $class: 'Oliverde8\Component\PhpEtl\ChainOperation\Grouping\SimpleGroupingOperation'
+    tags:
+      - { name: etl.operation-factory }
+
+  Oliverde8\Component\PhpEtl\Builder\Factories\Loader\CsvFileWriterFactory:
+    class: Oliverde8\Component\PhpEtl\Builder\Factories\Loader\CsvFileWriterFactory
+    autowire: true
+    arguments:
+      $operation: 'csv-write'
+      $class: 'Oliverde8\Component\PhpEtl\ChainOperation\Loader\FileWriterOperation'
+    tags:
+      - { name: etl.operation-factory }

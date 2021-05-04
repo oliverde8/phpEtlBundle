@@ -1,0 +1,21 @@
+{% if (field.value == constant('Oliverde8\\PhpEtlBundle\\Entity\\EtlExecution::STATUS_SUCCESS') ) %}
+    <span class="badge badge-success">
+        {{ field.value|nl2br }}
+    </span>
+{% elseif (field.value == constant('Oliverde8\\PhpEtlBundle\\Entity\\EtlExecution::STATUS_RUNNING') ) %}
+    <span class="badge badge-primary">
+        {{ field.value|nl2br }}
+    </span>
+{% elseif (field.value == constant('Oliverde8\\PhpEtlBundle\\Entity\\EtlExecution::STATUS_FAILURE') ) %}
+    <span class="badge badge-danger">
+        {{ field.value|nl2br }}
+    </span>
+{% elseif (field.value == constant('Oliverde8\\PhpEtlBundle\\Entity\\EtlExecution::STATUS_WAITING') ) %}
+    <span class="badge badge-info">
+        {{ field.value|nl2br }}
+    </span>
+{% else %}
+    <span>
+        {{ field.value|nl2br }}
+    </span>
+{% endif %}

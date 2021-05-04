@@ -1,0 +1,30 @@
+services:
+  Oliverde8\Component\RuleEngine\Rules\Get:
+    class: Oliverde8\Component\RuleEngine\Rules\Get
+    autowire: true
+    tags:
+      - { name: etl.rule }
+
+  Oliverde8\Component\RuleEngine\Rules\Implode:
+    class: Oliverde8\Component\RuleEngine\Rules\Implode
+    autowire: true
+    tags:
+      - { name: etl.rule }
+
+  Oliverde8\Component\RuleEngine\Rules\StrToLower:
+    class: Oliverde8\Component\RuleEngine\Rules\StrToLower
+    autowire: true
+    tags:
+      - { name: etl.rule }
+
+  Oliverde8\Component\RuleEngine\Rules\StrToUpper:
+    class: Oliverde8\Component\RuleEngine\Rules\StrToUpper
+    autowire: true
+    tags:
+      - { name: etl.rule }
+
+  Oliverde8\Component\RuleEngine\Rules\ExpressionLanguage:
+    class: Oliverde8\Component\RuleEngine\Rules\ExpressionLanguage
+    autowire: true
+    tags:
+      - { name: etl.rule }

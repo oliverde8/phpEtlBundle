@@ -1,0 +1,22 @@
+services:
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  Oliverde8\PhpEtlBundle\:
+    resource: '../../'
+    exclude:
+      - '../../DependencyInjection/'
+      - '../..//Entity/'
+      - '../../Tests/'
+
+  Oliverde8\Component\PhpEtl\ChainBuilder:
+    class: Oliverde8\Component\PhpEtl\ChainBuilder
+
+  Oliverde8\Component\RuleEngine\RuleApplier:
+    class: Oliverde8\Component\RuleEngine\RuleApplier
+    arguments:
+      $rules: [ ]
+      $validate: true
+
