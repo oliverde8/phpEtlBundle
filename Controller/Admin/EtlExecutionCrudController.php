@@ -50,14 +50,15 @@ class EtlExecutionCrudController extends AbstractCrudController
                 Field::new('startTime'),
                 Field::new('endTime'),
                 Field::new('failTime'),
-                Field::new('inputData'),
-                Field::new('inputOptions'),
+                CodeEditorField::new('inputData')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),
+                CodeEditorField::new('inputOptions')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),
                 CodeEditorField::new('definition')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),
                 CodeEditorField::new('errorMessage')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),
             ];
         }
         if (Crud::PAGE_INDEX === $pageName) {
             return [
+                Field::new('id'),
                 Field::new('name'),
                 TextField::new('status')->setTemplatePath('@Oliverde8PhpEtl/fields/status.html.twig'),
                 Field::new('startTime'),

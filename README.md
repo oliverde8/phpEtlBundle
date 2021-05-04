@@ -1,7 +1,11 @@
 # PHP Etl Bundle
 
-The Php etl bundle allows the usage of [Olivers PHP Etl](https://github.com/oliverde8/php-etl) library in symfony. 
-Add's an integration to easy admin as well to be able see executions history & errors from an interface. 
+The Php etl bundle allows the usage of [Oliver's PHP Etl](https://github.com/oliverde8/php-etl) library in symfony. 
+Add's an integration to easy admin as well in order to see a list of the executions
+![List of etl executions](docs/etl-execution-list.png)
+
+And also a details on each execution
+![List of etl executions](docs/etl-execution-details.png)
 
 ## Installation
 
@@ -19,7 +23,9 @@ Add's an integration to easy admin as well to be able see executions history & e
 yield MenuItem::linkToCrud('Etl Executions', 'fas fa-list', EtlExecution::class);
 ```
 
-## Creating a ETL
+## Usage
+
+### Creating an ETL chain
 
 First read the documentation of the [PHP ETL](https://github.com/oliverde8/php-etl) 
 
@@ -37,20 +43,23 @@ chain:
             - get : {field: [0, 'uid']}
 ```
 
-## Executing a chain
+### Executing a chain
 
 ```sh
 ./bin/console etl:execute demo '[["test1"],["test2"]]' '{"opt1": "val1"}'
 ```
 
-## Additional commands
+The first argument is the input, depending on your chain it can be empty. The second are parameters that 
+will be available in the context of each link in the chain. 
 
-### Get a definition
+### Additional commands
+
+#### Get a definition
 ```sh
 ./bin/console etl:get-definition demo
 ```
 
 ## TODO
-- Separate the easy admin section in an other bundle. 
-- Add possibility to create etl chains from the interface 
+- Separate the easy admin section in an other bundle. Maybe not necessery.
+- Add possibility to create etl chains definitions from the interface.  
 - Add the possibility to queue an execution. 

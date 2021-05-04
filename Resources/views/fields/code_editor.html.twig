@@ -5,7 +5,7 @@
     {# TODO: improve this to highlight code #}
     {% set configuredHeight = field.customOptions.get('height') %}
     <pre style="line-height: 1; overflow-y: hidden;">
-        {{ field.value|nl2br }}
+{{ field.value|nl2br }}
     </pre>
 {% else %}
     {% set html_id = 'ea-code-editor-' ~ field.uniqueId %}
