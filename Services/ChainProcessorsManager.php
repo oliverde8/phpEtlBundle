@@ -3,12 +3,12 @@
 
 namespace Oliverde8\PhpEtlBundle\Services;
 
-
 use Oliverde8\Component\PhpEtl\ChainProcessor;
+use Oliverde8\Component\PhpEtl\Item\DataItem;
+use Oliverde8\Component\PhpEtl\Item\DataItemInterface;
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
 use Oliverde8\PhpEtlBundle\Repository\EtlExecutionRepository;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Yaml\Yaml;
 
 class ChainProcessorsManager
 {
@@ -56,14 +56,17 @@ class ChainProcessorsManager
         }
 
         $execution = new EtlExecution($chainName, $definition, $inputData, $params);
+        $execution->setStatus(EtlExecution::STATUS_RUNNING);
         $this->etlExecutionRepository->save($execution);
 
         $params['etl'] = ['chain' => $chainName, 'startTime' => new \DateTime()];
 
         try {
             $processor->process($iterator, $params);
+            $execution->setStatus(EtlExecution::STATUS_SUCCESS);
         } catch (\Exception $exception) {
             $execution->setFailTime(new \DateTime());
+            $execution->setStatus(EtlExecution::STATUS_FAILURE);
             $execution->setErrorMessage($exception->getMessage() . "\n" . $exception->getTraceAsString());
             throw $exception;
         } finally {

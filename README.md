@@ -69,6 +69,35 @@ will be available in the context of each link in the chain.
 ./bin/console etl:get-definition demo
 ```
 
+### Adding your own chain operation
+
+To add your own chain operation you need 2 classes. The operation itself that we will call 
+`MyVendor\Etl\Operation\OurTestOperation`, and a `MyVendor\Etl\OperationFactory\OurTestOperationFactory` factory 
+to create it. The factory allows us to configure the operation and inject service to our operation.
+
+All operations needs to implement `DataChainOperationInterface`; they can extend `AbstractChainOperation`. 
+
+All factories needs to extend `Oliverde8\Component\PhpEtl\Builder\Factories\AbstractFactory`. 
+
+The operation is a Model and not a service, you therefore need to add the path to the exclusions so that it's not
+made a service by symfony: 
+```yaml
+App\:
+  resource: '../src/'
+  exclude:
+    - '../src/Etl/Operation'
+```
+
+Factories needs to be tagged `etl.operation-factory\ . To remove the need to tag all your factories you can add 
+the following line your your services.yaml file
+```yaml
+    MyVendor\Etl\OperationFactory\:
+        resource: '../src/Etl/OperationFactory/'
+        tags: ['etl.operation-factory']
+```
+
+For more information on how the etl works and how to create operations check the [Php Etl Documentation](https://github.com/oliverde8/php-etl#creating-you-own-operations)
+
 ## TODO
 - Separate the easy admin section in an other bundle. Maybe not necessery.
 - Add possibility to create etl chains definitions from the interface.  
