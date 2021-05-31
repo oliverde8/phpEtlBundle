@@ -12,9 +12,23 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Oliverde8\PhpEtlBundle\Services\ChainWorkDirManager;
 
 class EtlExecutionCrudController extends AbstractCrudController
 {
+    /** @var ChainWorkDirManager */
+    protected $chainWorkDirManager;
+
+    /**
+     * EtlExecutionCrudController constructor.
+     * @param ChainWorkDirManager $chainWorkDirManager
+     */
+    public function __construct(ChainWorkDirManager $chainWorkDirManager)
+    {
+        $this->chainWorkDirManager = $chainWorkDirManager;
+    }
+
+
     public static function getEntityFqcn(): string
     {
         return EtlExecution::class;
@@ -50,6 +64,10 @@ class EtlExecutionCrudController extends AbstractCrudController
                 Field::new('startTime'),
                 Field::new('endTime'),
                 Field::new('failTime'),
+                TextField::new('Files')->formatValue(function ($value, EtlExecution $entity) {
+                    // TODO create url's.
+                    return $this->chainWorkDirManager->listFiles($entity);
+                })->setTemplatePath('@Oliverde8PhpEtl/fields/files.html.twig'),
                 CodeEditorField::new('inputData')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),
                 CodeEditorField::new('inputOptions')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),
                 CodeEditorField::new('definition')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),
