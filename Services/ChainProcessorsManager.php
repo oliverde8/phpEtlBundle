@@ -4,6 +4,7 @@
 namespace Oliverde8\PhpEtlBundle\Services;
 
 use Oliverde8\Component\PhpEtl\ChainProcessor;
+use Oliverde8\Component\PhpEtl\Exception\ChainOperationException;
 use Oliverde8\Component\PhpEtl\Item\DataItem;
 use Oliverde8\Component\PhpEtl\Item\DataItemInterface;
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
@@ -41,13 +42,22 @@ class ChainProcessorsManager
 
     public function getProcessor(string $chainName): ChainProcessor
     {
+        // TODO Think about either creating the processor & runtime or injecting them into the constructor like the definitions.
         return $this->container->get("oliverde8.etl.chain.$chainName");
     }
 
+    /**
+     * Execute a particular chanin
+     *
+     * @param string $chainName
+     * @param $iterator
+     * @param array $params
+     *
+     * @throws \Exception
+     */
     public function execute(string $chainName, $iterator, array $params)
     {
         $definition = $this->getDefinition($chainName);
-        $processor = $this->getProcessor($chainName);
 
         $inputData = ["Iterator! Can't show input data"];
         if (is_array($iterator)) {
@@ -59,6 +69,28 @@ class ChainProcessorsManager
         $execution->setStatus(EtlExecution::STATUS_RUNNING);
         $this->etlExecutionRepository->save($execution);
 
+        $this->executeFromEtlEntity($execution, $iterator);
+    }
+
+    /**
+     * Execute a chain from it's entity.
+     *
+     * @param EtlExecution $execution
+     * @param null $iterator
+     * @throws ChainOperationException
+     */
+    public function executeFromEtlEntity(EtlExecution $execution, $iterator = null)
+    {
+        $chainName = $execution->getName();
+        $processor = $this->getProcessor($chainName);
+        $params = json_decode($execution->getInputOptions());
+
+        if (is_null($iterator)) {
+            $iterator = new \ArrayIterator(json_decode($execution->getInputData()));
+        }
+
+        $execution->setStatus(EtlExecution::STATUS_RUNNING);
+        $this->etlExecutionRepository->save($execution);
         $params['etl'] = ['chain' => $chainName, 'startTime' => new \DateTime()];
 
         try {
