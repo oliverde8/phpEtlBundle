@@ -40,5 +40,6 @@ class GetDefinitionCommand extends Command
         $definition = $this->chainProcessorsManager->getDefinition($chainName);
 
         echo Yaml::dump($definition, 4);
+        return 0;
     }
 }

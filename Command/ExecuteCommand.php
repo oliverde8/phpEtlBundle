@@ -46,5 +46,6 @@ class ExecuteCommand extends Command
         $data = json_decode($input->getArgument(self::ARGUMENT_DATA) ?? '[]', true);
 
         $this->chainProcessorsManager->execute($chainName, $data, $options);
+        return 0;
     }
 }
