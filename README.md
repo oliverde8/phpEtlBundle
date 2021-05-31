@@ -29,8 +29,17 @@ And also a details on each execution:
 ```
 
 4. Add to easy admin
-```angular2html
+```php
 yield MenuItem::linkToCrud('Etl Executions', 'fas fa-list', EtlExecution::class);
+```
+
+5. Optional: Enable creation of individual files for each log by editing the monolog.yaml
+```yaml
+etl:
+    type: service
+    id: Oliverde8\PhpEtlBundle\Services\ChainExecutionLogger
+    level: debug
+    channels: ["!event"]
 ```
 
 ## Usage

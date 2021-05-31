@@ -10,6 +10,7 @@ use Oliverde8\Component\PhpEtl\Item\DataItemInterface;
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
 use Oliverde8\PhpEtlBundle\Repository\EtlExecutionRepository;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class ChainProcessorsManager
 {
@@ -19,8 +20,15 @@ class ChainProcessorsManager
     /** @var EtlExecutionRepository */
     protected $etlExecutionRepository;
 
+    /** @var ChainExecutionLogger */
+    protected $chainExecutionLogger;
+
+    /** @var LoggerInterface */
+    protected $logger;
+
     /** @var array */
     protected $definitions;
+
 
     /**
      * ChainProcessorsManager constructor.
@@ -28,10 +36,17 @@ class ChainProcessorsManager
      * @param EtlExecutionRepository $etlExecutionRepository
      * @param array $definitions
      */
-    public function __construct(ContainerInterface $container, EtlExecutionRepository $etlExecutionRepository, array $definitions)
-    {
+    public function __construct(
+        ContainerInterface $container,
+        EtlExecutionRepository $etlExecutionRepository,
+        ChainExecutionLogger $chainExecutionLogger,
+        LoggerInterface $logger,
+        array $definitions
+    ) {
         $this->container = $container;
         $this->etlExecutionRepository = $etlExecutionRepository;
+        $this->chainExecutionLogger = $chainExecutionLogger;
+        $this->logger = $logger;
         $this->definitions = $definitions;
     }
 
@@ -81,6 +96,8 @@ class ChainProcessorsManager
      */
     public function executeFromEtlEntity(EtlExecution $execution, $iterator = null)
     {
+        $this->chainExecutionLogger->setCurrentExecution($execution);
+
         $chainName = $execution->getName();
         $processor = $this->getProcessor($chainName);
         $params = json_decode($execution->getInputOptions());
@@ -94,9 +111,15 @@ class ChainProcessorsManager
         $params['etl'] = ['chain' => $chainName, 'startTime' => new \DateTime()];
 
         try {
+            $this->logger->info("Starting etl process!", $params);
             $processor->process($iterator, $params);
             $execution->setStatus(EtlExecution::STATUS_SUCCESS);
+
+            $this->logger->info("Finished etl process!", $params);
         } catch (\Exception $exception) {
+            $params['exception'] = $exception;
+            $this->logger->info("Faild during etl process!", $params);
+
             $execution->setFailTime(new \DateTime());
             $execution->setStatus(EtlExecution::STATUS_FAILURE);
             $execution->setErrorMessage($exception->getMessage() . "\n" . $exception->getTraceAsString());
@@ -105,6 +128,8 @@ class ChainProcessorsManager
             $execution->setEndTime(new \DateTime());
             $execution->setStepStats('[]'); // To be developped
             $this->etlExecutionRepository->save($execution);
+
+            $this->chainExecutionLogger->setCurrentExecution(null);
         }
     }
 }

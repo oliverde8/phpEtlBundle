@@ -11,6 +11,12 @@ services:
       - '../..//Entity/'
       - '../../Tests/'
 
+  Oliverde8\PhpEtlBundle\Services\ChainWorkDirManager:
+    class: Oliverde8\PhpEtlBundle\Services\ChainWorkDirManager
+    arguments:
+      $baseDir: "%oliverde8.php.etl.base_dir%"
+
+
   Oliverde8\Component\PhpEtl\ChainBuilder:
     class: Oliverde8\Component\PhpEtl\ChainBuilder
 
