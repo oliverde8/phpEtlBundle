@@ -12,7 +12,8 @@
   "require": {
     "php": ">=7.4.0",
     "oliverde8/php-etl": "^V0.3.0",
-    "easycorp/easyadmin-bundle": "^3.2"
+    "easycorp/easyadmin-bundle": "^3.2",
+    "symfony/messenger": "^4.4|^5.0"
   },
   "autoload": {
     "psr-4": {

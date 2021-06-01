@@ -55,6 +55,11 @@ class ChainProcessorsManager
         return $this->definitions[$chainName];
     }
 
+    public function getDefinitions(): array
+    {
+        return $this->definitions;
+    }
+
     public function getProcessor(string $chainName): ChainProcessor
     {
         // TODO Think about either creating the processor & runtime or injecting them into the constructor like the definitions.
@@ -102,11 +107,13 @@ class ChainProcessorsManager
         $processor = $this->getProcessor($chainName);
         $params = json_decode($execution->getInputOptions());
 
+
         if (is_null($iterator)) {
             $iterator = new \ArrayIterator(json_decode($execution->getInputData()));
         }
 
         $execution->setStatus(EtlExecution::STATUS_RUNNING);
+        $execution->setStartTime(new \DateTime());
         $this->etlExecutionRepository->save($execution);
         $params['etl'] = ['chain' => $chainName, 'startTime' => new \DateTime()];
 
@@ -118,7 +125,7 @@ class ChainProcessorsManager
             $this->logger->info("Finished etl process!", $params);
         } catch (\Exception $exception) {
             $params['exception'] = $exception;
-            $this->logger->info("Faild during etl process!", $params);
+            $this->logger->info("Failed during etl process!", $params);
 
             $execution->setFailTime(new \DateTime());
             $execution->setStatus(EtlExecution::STATUS_FAILURE);

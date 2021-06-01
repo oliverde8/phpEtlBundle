@@ -41,6 +41,14 @@ etl_bundle:
   prefix: /admin
 ```
 
+6. Optional: Enable queue if you wish to allow users from the easy admin panel to do executions.
+```yaml
+framework:
+  messenger:
+    routing:
+        "Oliverde8\PhpEtlBundle\Message\EtlExecutionMessage": async
+```
+
 6. Optional: Enable creation of individual files for each log by editing the monolog.yaml
 ```yaml
 etl:

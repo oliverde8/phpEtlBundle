@@ -34,7 +34,7 @@ class ChainWorkDirManager
      */
     public function getWorkDir(EtlExecution $execution): string
     {
-        $dir = $this->baseDir . "/" . $execution->getStartTime()->format("y/m/d") . "/id-" . $execution->getId() . "/";
+        $dir = $this->baseDir . "/" . $execution->getCreateTime()->format("y/m/d") . "/id-" . $execution->getId() . "/";
         $this->fileSystem->mkdir($dir);
 
         return $dir;

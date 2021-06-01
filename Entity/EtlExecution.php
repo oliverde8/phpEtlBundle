@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 class EtlExecution
 {
     public const STATUS_WAITING ="waiting";
+    public const STATUS_QUEUED ="queued";
     public const STATUS_RUNNING = "running";
     public const STATUS_SUCCESS = "success";
     public const STATUS_FAILURE = "failure";
@@ -28,6 +29,11 @@ class EtlExecution
     private $name;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $username;
+
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $inputData;
@@ -39,6 +45,11 @@ class EtlExecution
 
     /**
      * @ORM\Column(type="datetime")
+     */
+    private $createTime;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $startTime;
 
@@ -81,7 +92,7 @@ class EtlExecution
     {
         $this->name = $name;
         $this->definition = $definition;
-        $this->startTime = new \DateTime();
+        $this->createTime = new \DateTime();
         $this->status = self::STATUS_WAITING;
 
         $this->inputData = json_encode($inputData);
@@ -104,6 +115,22 @@ class EtlExecution
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * @param mixed $username
+     */
+    public function setUsername($username): void
+    {
+        $this->username = $username;
     }
 
     /**
@@ -136,6 +163,16 @@ class EtlExecution
     public function setInputOptions($inputOptions): void
     {
         $this->inputOptions = $inputOptions;
+    }
+
+    public function getCreateTime(): \DateTime
+    {
+        return $this->createTime;
+    }
+
+    public function setCreateTime(\DateTime $createTime): void
+    {
+        $this->createTime = $createTime;
     }
 
     public function getStartTime(): ?\DateTimeInterface

@@ -4,6 +4,7 @@
 namespace Oliverde8\PhpEtlBundle\Controller\Admin;
 
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
+use Oliverde8\PhpEtlBundle\Security\EtlExecutionVoter;
 use Oliverde8\PhpEtlBundle\Services\ChainWorkDirManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,6 +32,8 @@ class EtlDownloadFileController extends AbstractController
      */
     public function index(EtlExecution $execution, string $filename): Response
     {
+        $this->denyAccessUnlessGranted(EtlExecutionVoter::DOWNLOAD, EtlExecution::class);
+
         //TODO add Acl here for future proofing.
         return $this->file(
             $this->chainWorkDirManager->getWorkDir($execution) . "/" . $filename,
