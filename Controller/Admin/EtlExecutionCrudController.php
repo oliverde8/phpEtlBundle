@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use Oliverde8\PhpEtlBundle\Services\ChainWorkDirManager;
@@ -19,15 +20,19 @@ class EtlExecutionCrudController extends AbstractCrudController
     /** @var ChainWorkDirManager */
     protected $chainWorkDirManager;
 
+    /** @var AdminUrlGenerator */
+    protected $adminUrlGenerator;
+
     /**
      * EtlExecutionCrudController constructor.
      * @param ChainWorkDirManager $chainWorkDirManager
+     * @param AdminUrlGenerator $adminUrlGenerator
      */
-    public function __construct(ChainWorkDirManager $chainWorkDirManager)
+    public function __construct(ChainWorkDirManager $chainWorkDirManager, AdminUrlGenerator $adminUrlGenerator)
     {
         $this->chainWorkDirManager = $chainWorkDirManager;
+        $this->adminUrlGenerator = $adminUrlGenerator;
     }
-
 
     public static function getEntityFqcn(): string
     {
@@ -66,7 +71,18 @@ class EtlExecutionCrudController extends AbstractCrudController
                 Field::new('failTime'),
                 TextField::new('Files')->formatValue(function ($value, EtlExecution $entity) {
                     // TODO create url's.
-                    return $this->chainWorkDirManager->listFiles($entity);
+                    $files = $this->chainWorkDirManager->listFiles($entity);
+                    $urls = [];
+
+                    foreach ($files as $file) {
+                        $url = $this->adminUrlGenerator
+                            ->setRoute("etl_execution_download_file", ['execution' => $entity->getId(), 'filename' => $file])
+                            ->generateUrl();
+
+                        $urls[$url] = $file;
+                    }
+
+                    return $urls;
                 })->setTemplatePath('@Oliverde8PhpEtl/fields/files.html.twig'),
                 CodeEditorField::new('inputData')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),
                 CodeEditorField::new('inputOptions')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),

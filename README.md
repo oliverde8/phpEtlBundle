@@ -33,7 +33,15 @@ And also a details on each execution:
 yield MenuItem::linkToCrud('Etl Executions', 'fas fa-list', EtlExecution::class);
 ```
 
-5. Optional: Enable creation of individual files for each log by editing the monolog.yaml
+5. Enable routes
+```yaml
+etl_bundle:
+  resource: '@Oliverde8PhpEtlBundle/Controller'
+  type: annotation
+  prefix: /admin
+```
+
+6. Optional: Enable creation of individual files for each log by editing the monolog.yaml
 ```yaml
 etl:
     type: service
