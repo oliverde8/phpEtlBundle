@@ -114,6 +114,7 @@ class ChainProcessorsManager
 
         $execution->setStatus(EtlExecution::STATUS_RUNNING);
         $execution->setStartTime(new \DateTime());
+        $execution->setWaitTime(time() - $execution->getCreateTime()->getTimestamp());
         $this->etlExecutionRepository->save($execution);
         $params['etl'] = ['chain' => $chainName, 'startTime' => new \DateTime()];
 
@@ -133,6 +134,7 @@ class ChainProcessorsManager
             throw $exception;
         } finally {
             $execution->setEndTime(new \DateTime());
+            $execution->setRunTime(time() - $execution->getStartTime()->getTimestamp());
             $execution->setStepStats('[]'); // To be developped
             $this->etlExecutionRepository->save($execution);
 

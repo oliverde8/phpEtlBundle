@@ -13,9 +13,14 @@ Add's an integration to easy admin as well in order to see a list of the executi
 
 ![List of etl executions](docs/etl-execution-list.png)
 
-And also a details on each execution:
+And also a details on each execution. Logs of each execution and files processed in each execution can also be found here
 
 ![List of etl executions](docs/etl-execution-details.png)
+
+Also provides a dashboard to see current state. 
+
+![Dashboard of etl executions](docs/etl-dashboard.png)
+
 
 ## Installation
 
@@ -30,6 +35,7 @@ And also a details on each execution:
 
 4. Add to easy admin
 ```php
+yield MenuItem::linktoRoute("Job Dashboard", 'fas fa-chart-bar', "etl_execution_dashboard");
 yield MenuItem::linkToCrud('Etl Executions', 'fas fa-list', EtlExecution::class);
 ```
 

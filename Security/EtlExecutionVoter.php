@@ -10,6 +10,7 @@ class EtlExecutionVoter extends Voter
 {
     const QUEUE = 'queue';
     const VIEW = 'view';
+    const DASHBOARD = 'dashboard';
     const DOWNLOAD = 'download';
 
     protected function supports($attribute, $subject)

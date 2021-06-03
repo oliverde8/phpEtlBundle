@@ -52,11 +52,20 @@ class EtlExecution
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $startTime;
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $waitTime = 0;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $endTime;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $runTime = 0;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -188,6 +197,22 @@ class EtlExecution
     }
 
     /**
+     * @return int
+     */
+    public function getWaitTime(): int
+    {
+        return $this->waitTime;
+    }
+
+    /**
+     * @param int $waitTime
+     */
+    public function setWaitTime(int $waitTime): void
+    {
+        $this->waitTime = $waitTime;
+    }
+
+    /**
      * @return mixed
      */
     public function getFailTime()
@@ -215,6 +240,22 @@ class EtlExecution
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getRunTime(): int
+    {
+        return $this->runTime;
+    }
+
+    /**
+     * @param int $runTime
+     */
+    public function setRunTime(int $runTime): void
+    {
+        $this->runTime = $runTime;
+    }
+    
     /**
      * @return mixed
      */

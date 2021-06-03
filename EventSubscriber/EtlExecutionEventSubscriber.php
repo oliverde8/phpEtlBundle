@@ -28,7 +28,7 @@ class EtlExecutionEventSubscriber implements EventSubscriberInterface
      * @param ChainProcessorsManager $chainProcessorManager
      * @param MessageBusInterface $messageBus
      */
-    public function __construct(EntityManagerInterface $em, ChainProcessorsManager $chainProcessorManager, MessageBusInterface $messageBus)
+    public function __construct(EntityManagerInterface $em, ChainProcessorsManager $chainProcessorManager, ?MessageBusInterface $messageBus =null)
     {
         $this->em = $em;
         $this->chainProcessorManager = $chainProcessorManager;

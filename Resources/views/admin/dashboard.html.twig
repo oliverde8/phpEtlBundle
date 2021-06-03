@@ -1,0 +1,185 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{% extends '@EasyAdmin/layout.html.twig' %}
+
+{% block content_title %}
+    Etl Execution Dashboard
+{% endblock %}
+
+{% block content_help %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mt-3">
+        <label for="time_period" class="form-label">Time Period</label>
+        <div class="col-6 col-lg-4 col-xl-2">
+            <select id="time_period" class="form-control" nama="time_period">
+                <option value="24h" selected="selected">Last 7days</option>
+            </select>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-6 col-lg-4 col-xl-2 mt-2">
+            <div class="card text-center  bg-info">
+                <div class="card-header">
+                    <h3 class="text-white">Waiting</h3>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-subtitle text-white">
+                        <a class="text-white" href="{{ ea_url({'filters': {'status': {'comparison': '=', 'value': ['waiting']}}}).setController(crudController) }}">
+                            {{ num_waiting }}
+                        </a>
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-4 col-xl-2 mt-2">
+            <div class="card text-center bg-warning">
+                <div class="card-header">
+                    <h3 class="text-white">Running</h3>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-subtitle text-white">
+                        <a class="text-white" href="{{ ea_url({'filters': {'status': {'comparison': '=', 'value': ['running']}}}).setController(crudController) }}">
+                            {{ num_running }}
+                        </a>
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-4 col-xl-2 mt-2">
+            <div class="card bg-success text-center">
+                <div class="card-header">
+                    <h3 class="text-white">Success</h3>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-subtitle text-white">
+                        <a class="text-white" href="{{ ea_url({'filters': {'status': {'comparison': '=', 'value': ['sucess']}}}).setController(crudController) }}">
+                            {{ num_success }}
+                        </a>
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-4 col-xl-2 mt-2">
+            <div class="card bg-danger text-center">
+                <div class="card-header">
+                    <h3 class="text-white">Failure</h3>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-subtitle">
+                        <a class="text-white" href="{{ ea_url({'filters': {'status': {'comparison': '=', 'value': ['failure']}}}).setController(crudController) }}">
+                            {{ num_failure }}
+                        </a>
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-4 col-xl-2 mt-2">
+            <div class="card text-center">
+                <div class="card-header">
+                    <h3>Avg Wait</h3>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-subtitle">{{ avg_wait_time|timeSpent }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-4 col-xl-2 mt-2">
+            <div class="card text-center">
+                <div class="card-header">
+                    <h3>Max Wait</h3>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-subtitle">{{ max_wait_time|timeSpent }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <!-- Most Executed -->
+        <div class="col-12 col-xl-4 mt-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Most Executed</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Job Name</th>
+                                <th scope="col">Number of executions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in most_executed %}
+                            <tr>
+                                <td>{{ data.name }}</td>
+                                <td>{{ data.count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Most Time Spent -->
+        <div class="col-12 col-xl-4 mt-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Most Time Spent</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Job Name</th>
+                            <th scope="col">Total Time Spent</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for data in most_time_spent %}
+                            <tr>
+                                <td>{{ data.name }}</td>
+                                <td>{{ data.runTime|timeSpent }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Longest to execute -->
+        <div class="col-12 col-xl-4 mt-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Longest</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Job Name</th>
+                            <th scope="col">Longest</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for data in longest %}
+                            <tr>
+                                <td>{{ data.name }}</td>
+                                <td>{{ data.runTime|timeSpent }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock main %}
+
+
