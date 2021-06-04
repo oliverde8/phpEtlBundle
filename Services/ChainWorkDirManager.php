@@ -54,4 +54,24 @@ class ChainWorkDirManager
 
         return $files;
     }
+
+    public function getFirstLogLines(EtlExecution $execution, $nbLines = 100): array
+    {
+        $logFile = $this->getWorkDir($execution) . "/execution.log";
+        $logLines = [];
+
+        if (!is_file($logFile)) {
+            return $logLines;
+        }
+
+        $file = fopen($logFile, 'rb');
+        $nbLine = 0;
+
+        while ($nbLine <= $nbLines && $line = fgets($file)) {
+            $nbLine++;
+            $logLines[] = $line;
+        }
+
+        return $logLines;
+    }
 }

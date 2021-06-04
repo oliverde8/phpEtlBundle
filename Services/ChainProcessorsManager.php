@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Oliverde8\PhpEtlBundle\Services;
 
 use Oliverde8\Component\PhpEtl\ChainProcessor;
@@ -101,15 +100,14 @@ class ChainProcessorsManager
      */
     public function executeFromEtlEntity(EtlExecution $execution, $iterator = null)
     {
-        $this->chainExecutionLogger->setCurrentExecution($execution);
 
         $chainName = $execution->getName();
         $processor = $this->getProcessor($chainName);
-        $params = json_decode($execution->getInputOptions());
+        $params = json_decode($execution->getInputOptions(), true);
 
 
         if (is_null($iterator)) {
-            $iterator = new \ArrayIterator(json_decode($execution->getInputData()));
+            $iterator = new \ArrayIterator(json_decode($execution->getInputData(), true));
         }
 
         $execution->setStatus(EtlExecution::STATUS_RUNNING);
@@ -119,18 +117,19 @@ class ChainProcessorsManager
         $params['etl'] = ['chain' => $chainName, 'startTime' => new \DateTime()];
 
         try {
+            $this->chainExecutionLogger->setCurrentExecution($execution);
             $this->logger->info("Starting etl process!", $params);
             $processor->process($iterator, $params);
             $execution->setStatus(EtlExecution::STATUS_SUCCESS);
 
             $this->logger->info("Finished etl process!", $params);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             $params['exception'] = $exception;
             $this->logger->info("Failed during etl process!", $params);
 
             $execution->setFailTime(new \DateTime());
             $execution->setStatus(EtlExecution::STATUS_FAILURE);
-            $execution->setErrorMessage($exception->getMessage() . "\n" . $exception->getTraceAsString());
+            $execution->setErrorMessage($this->getFullExeptionTrace($exception));
             throw $exception;
         } finally {
             $execution->setEndTime(new \DateTime());
@@ -140,5 +139,15 @@ class ChainProcessorsManager
 
             $this->chainExecutionLogger->setCurrentExecution(null);
         }
+    }
+
+    protected function getFullExeptionTrace(\Exception $exception)
+    {
+        $message = '';
+        do {
+            $message .= $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n\n";
+        } while ($exception = $exception->getPrevious());
+
+        return $message;
     }
 }

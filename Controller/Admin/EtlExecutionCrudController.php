@@ -5,11 +5,13 @@ namespace Oliverde8\PhpEtlBundle\Controller\Admin;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -84,13 +86,22 @@ class EtlExecutionCrudController extends AbstractCrudController
     {
         if (Crud::PAGE_DETAIL === $pageName) {
             return [
+                FormField::addPanel("Details")->addCssClass("col-12 col-xl-6"),
                 Field::new('name'),
                 Field::new('username'),
-                Field::new('status'),
+                TextField::new('status')->setTemplatePath('@Oliverde8PhpEtl/fields/status.html.twig'),
+                FormField::addPanel()->addCssClass("col-12 col-xl-6"),
                 Field::new('createTime'),
                 Field::new('startTime'),
                 Field::new('endTime'),
                 Field::new('failTime'),
+
+                FormField::addPanel('Execution Inputs')->addCssClass('col-12'),
+                CodeEditorField::new('inputData')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig')->addCssClass('etl-json-div'),
+                CodeEditorField::new('inputOptions')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig')->addCssClass('etl-json-div'),
+                CodeEditorField::new('definition')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),
+
+                FormField::addPanel('Execution outpus')->addCssClass("col-12"),
                 TextField::new('Files')->formatValue(function ($value, EtlExecution $entity) {
                     $urls = [];
                     if ($this->isGranted(EtlExecutionVoter::DOWNLOAD, EtlExecution::class)) {
@@ -106,10 +117,27 @@ class EtlExecutionCrudController extends AbstractCrudController
 
                     return $urls;
                 })->setTemplatePath('@Oliverde8PhpEtl/fields/files.html.twig'),
-                CodeEditorField::new('inputData')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),
-                CodeEditorField::new('inputOptions')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),
-                CodeEditorField::new('definition')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),
                 CodeEditorField::new('errorMessage')->setTemplatePath('@Oliverde8PhpEtl/fields/code_editor.html.twig'),
+                TextField::new('Logs')->formatValue(function ($value, EtlExecution $entity) {
+                    $logs = $this->chainWorkDirManager->getFirstLogLines($entity, 100);
+                    $url = "";
+                    $moreLogs = false;
+                    if (!empty($logs)) {
+                        $url = $this->adminUrlGenerator
+                            ->setRoute("etl_execution_download_file", ['execution' => $entity->getId(), 'filename' => 'execution.log'])
+                            ->generateUrl();
+                    }
+                    if (count($logs) > 100) {
+                        $moreLogs = true;
+                    }
+
+                    return [
+                        "lines" => $logs,
+                        'downloadUrl' => $url,
+                        'moreLogs' => $moreLogs,
+                    ];
+                })->setTemplatePath('@Oliverde8PhpEtl/fields/logs.html.twig'),
+
             ];
         }
         if (Crud::PAGE_INDEX === $pageName) {
@@ -127,14 +155,21 @@ class EtlExecutionCrudController extends AbstractCrudController
             return [
                 ChoiceField::new('name', 'Chain Name')
                     ->setChoices($this->getChainOptions()),
-                CodeEditorField::new('inputData'),
-                CodeEditorField::new('inputOptions'),
+                CodeEditorField::new('inputData')->setCssClass("etl-json-input"),
+                CodeEditorField::new('inputOptions')->setCssClass("etl-json-input"),
             ];
         }
 
         return parent::configureFields($pageName);
     }
 
+    public function configureAssets(Assets $assets): Assets
+    {
+        return $assets
+            ->addJsFile('https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.4.1/jsoneditor.min.js')
+            ->addCssFile('https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.4.1/jsoneditor.min.css')
+            ->addJsFile('/bundles/oliverde8phpetl/admin/fields/json-editor.js');
+    }
 
     public function configureFilters(Filters $filters): Filters
     {

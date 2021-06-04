@@ -1,0 +1,26 @@
+{% if field.formattedValue.downloadUrl is not empty %}
+    <div class="d-grid mb-2 ">
+        <a class="btn btn-primary" type="button" href="{{ field.formattedValue.downloadUrl }}">Download Log File</a>
+    </div>
+{% endif %}
+
+<ul class="list-group">
+    {% for num, log in field.formattedValue.lines %}
+        {% set additionalClass = cycle(['', 'list-group-item-secondary'], num) %}
+        {% if 'app.INFO: Starting etl process!' in log  %}
+            {% set additionalClass = 'list-group-item-success' %}
+        {% elseif 'app.INFO: Finished etl process!' in log  %}
+            {% set additionalClass = 'list-group-item-success' %}
+        {% elseif 'app.INFO: Failed during etl process!' in log %}
+            {% set additionalClass = 'list-group-item-danger' %}
+        {% endif %}
+
+        <li class="list-group-item {{ additionalClass }}">{{ num }} - {{ log }}</li>
+    {% endfor %}
+
+    {% if field.formattedValue.moreLogs %}
+        <li class="list-group-item list-group-item-primary text-center">
+            <a href="{{ field.formattedValue.downloadUrl }}">Download Log file to see remaining Logs</a>
+        </li>
+    {% endif %}
+</ul>
