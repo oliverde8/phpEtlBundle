@@ -100,4 +100,12 @@ class EtlExecutionRepository extends ServiceEntityRepository
 
         return (isset($result['waitTime'])) ? $result['waitTime'] : 0;
     }
+
+    public function getOldExecutions(\DateTime $time): iterable
+    {
+        dump($time);
+        return $this->createQueryBuilder('cm')
+            ->where("cm.createTime < :time")->setParameter('time', $time)->getQuery()->toIterable();
+    }
 }
+

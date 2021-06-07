@@ -100,23 +100,25 @@ class ChainProcessorsManager
      */
     public function executeFromEtlEntity(EtlExecution $execution, $iterator = null)
     {
-
         $chainName = $execution->getName();
-        $processor = $this->getProcessor($chainName);
-        $params = json_decode($execution->getInputOptions(), true);
-
-
-        if (is_null($iterator)) {
-            $iterator = new \ArrayIterator(json_decode($execution->getInputData(), true));
-        }
-
-        $execution->setStatus(EtlExecution::STATUS_RUNNING);
-        $execution->setStartTime(new \DateTime());
-        $execution->setWaitTime(time() - $execution->getCreateTime()->getTimestamp());
-        $this->etlExecutionRepository->save($execution);
-        $params['etl'] = ['chain' => $chainName, 'startTime' => new \DateTime()];
 
         try {
+            // Update execution object with new status.
+            $execution->setStatus(EtlExecution::STATUS_RUNNING);
+            $execution->setStartTime(new \DateTime());
+            $execution->setWaitTime(time() - $execution->getCreateTime()->getTimestamp());
+            $this->etlExecutionRepository->save($execution);
+
+            // Build the processor.
+            $processor = $this->getProcessor($chainName);
+            $params = json_decode($execution->getInputOptions(), true);
+
+            if (is_null($iterator)) {
+                $iterator = new \ArrayIterator(json_decode($execution->getInputData(), true));
+            }
+            $params['etl'] = ['chain' => $chainName, 'startTime' => new \DateTime()];
+
+            // Start the process.
             $this->chainExecutionLogger->setCurrentExecution($execution);
             $this->logger->info("Starting etl process!", $params);
             $processor->process($iterator, $params);
@@ -141,7 +143,7 @@ class ChainProcessorsManager
         }
     }
 
-    protected function getFullExeptionTrace(\Exception $exception)
+    protected function getFullExeptionTrace(\Throwable $exception)
     {
         $message = '';
         do {

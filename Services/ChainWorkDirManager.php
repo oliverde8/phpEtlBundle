@@ -28,14 +28,18 @@ class ChainWorkDirManager
 
     /**
      * @param EtlExecution $execution
+     * @param bool $createIfMissing
      * @return string
      *
      * @throws IOException if directory can't be created.
      */
-    public function getWorkDir(EtlExecution $execution): string
+    public function getWorkDir(EtlExecution $execution, $createIfMissing = true): string
     {
         $dir = $this->baseDir . "/" . $execution->getCreateTime()->format("y/m/d") . "/id-" . $execution->getId() . "/";
-        $this->fileSystem->mkdir($dir);
+
+        if ($createIfMissing) {
+            $this->fileSystem->mkdir($dir);
+        }
 
         return $dir;
     }

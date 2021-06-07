@@ -1,0 +1,12 @@
+name: "ETL Basic Jobs/Clean Old Executions"
+chain:
+  "Find Old Executions":
+    operation: Etl/Cleanup/FindOldExecutions
+    options:
+      keep: "1 day"
+  "Delete files for old execution":
+    operation: Etl/Cleanup/DeleteFilesForOldExecution
+    options:
+  "Delete old execution from database":
+    operation: Etl/Cleanup/DeleteEntityForOldExecution
+    options:

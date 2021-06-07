@@ -8,6 +8,7 @@
 - :star2: You can download all files used during an execution from the interface.
 - :star2: Dashboard allow you to monitor & see the executions.
 - :star2: User can queue chain executions from the interface
+- :star2: Added `etl-clean_old_executions` chain to cleanup old executions.
 - :wrench: Fixed deprecation on console commands.
 - :wrench: Various fixes and improvements.
 

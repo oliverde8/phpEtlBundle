@@ -10,7 +10,8 @@ use Symfony\Component\Yaml\Yaml;
 
 class ChainParameterCompiler implements CompilerPassInterface
 {
-    protected $paths = ["../config/etl/", "config/etl/"];
+    /** @TODO make this a parameter. */
+    protected $paths = ["../config/etl/", "config/etl/", __DIR__ . "/../../Resources/config/etl"];
 
     /**
      * You can modify the container here before it is dumped to PHP code.
