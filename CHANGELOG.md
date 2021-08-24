@@ -1,3 +1,5 @@
+# 1.0.0 Alpha #3
+- :star2: Split easy admin section into another bundle! **This is a BC change**
 
 # 1.0.0 Alpha #2
 

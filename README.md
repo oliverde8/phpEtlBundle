@@ -9,18 +9,8 @@
 [![License](https://poser.pugx.org/oliverde8/php-etl-bundle/license)](//packagist.org/packages/oliverde8/php-etl-bundle)
 
 The Php etl bundle allows the usage of [Oliver's PHP Etl](https://github.com/oliverde8/php-etl) library in symfony. 
-Add's an integration to easy admin as well in order to see a list of the executions:
 
-![List of etl executions](docs/etl-execution-list.png)
-
-And also a details on each execution. Logs of each execution and files processed in each execution can also be found here
-
-![List of etl executions](docs/etl-execution-details.png)
-
-Also provides a dashboard to see current state. 
-
-![Dashboard of etl executions](docs/etl-dashboard.png)
-
+You should also check the [PHP ETL's Easy Admin Bundle](https://github.com/oliverde8/phpEtlEasyadminBundle) to have interfaces.
 
 ## Installation
 
@@ -33,21 +23,7 @@ Also provides a dashboard to see current state.
     \Oliverde8\PhpEtlBundle\Oliverde8PhpEtlBundle::class => ['all' => true],
 ```
 
-4. Add to easy admin
-```php
-yield MenuItem::linktoRoute("Job Dashboard", 'fas fa-chart-bar', "etl_execution_dashboard");
-yield MenuItem::linkToCrud('Etl Executions', 'fas fa-list', EtlExecution::class);
-```
-
-5. Enable routes
-```yaml
-etl_bundle:
-  resource: '@Oliverde8PhpEtlBundle/Controller'
-  type: annotation
-  prefix: /admin
-```
-
-6. Optional: Enable queue if you wish to allow users from the easy admin panel to do executions.
+4. Optional: Enable queue if you wish to allow users from the easy admin panel to do executions.
 ```yaml
 framework:
   messenger:
@@ -55,7 +31,7 @@ framework:
         "Oliverde8\PhpEtlBundle\Message\EtlExecutionMessage": async
 ```
 
-6. Optional: Enable creation of individual files for each log by editing the monolog.yaml
+5. Optional: Enable creation of individual files for each log by editing the monolog.yaml
 ```yaml
 etl:
     type: service
@@ -128,8 +104,3 @@ the following line your your services.yaml file
 ```
 
 For more information on how the etl works and how to create operations check the [Php Etl Documentation](https://github.com/oliverde8/php-etl#creating-you-own-operations)
-
-## TODO
-- Separate the easy admin section in an other bundle. Maybe not necessery.
-- Add possibility to create etl chains definitions from the interface.  
-- Add the possibility to queue an execution. 
