@@ -11,7 +11,7 @@
   ],
   "require": {
     "php": ">=7.4.0",
-    "oliverde8/php-etl": "^V0.3.0",
+    "oliverde8/php-etl": "^V0.4.0",
     "symfony/framework-bundle": "^4.4|^5.0",
     "symfony/messenger": "^4.4|^5.0"
   },
