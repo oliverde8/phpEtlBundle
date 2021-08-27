@@ -35,7 +35,7 @@ class ChainExecutionLogger extends AbstractProcessingHandler
     }
 
 
-    protected function write(array $record)
+    protected function write(array $record): void
     {
         // TODO Optimize this by moving it into isHandling.
         if (is_null($this->currentExecution) || is_null($this->currentStreamHandler)) {
