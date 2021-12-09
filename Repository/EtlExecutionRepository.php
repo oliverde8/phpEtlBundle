@@ -103,7 +103,6 @@ class EtlExecutionRepository extends ServiceEntityRepository
 
     public function getOldExecutions(\DateTime $time): iterable
     {
-        $time = new \DateTime();
         return $this->createQueryBuilder('cm')
             ->where("cm.createTime < :time")->setParameter('time', $time)->getQuery()->toIterable();
     }
