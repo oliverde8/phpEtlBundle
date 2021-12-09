@@ -13,39 +13,23 @@ use Psr\Log\LoggerInterface;
 
 class ChainProcessorsManager
 {
-    /** @var ContainerInterface */
-    protected $container;
+    protected ContainerInterface $container;
 
-    /** @var EtlExecutionRepository */
-    protected $etlExecutionRepository;
+    protected EtlExecutionRepository $etlExecutionRepository;
 
-    /** @var ChainExecutionLogger */
-    protected $chainExecutionLogger;
+    protected LoggerFactory $loggerFactory;
 
-    /** @var LoggerInterface */
-    protected $logger;
+    protected array $definitions;
 
-    /** @var array */
-    protected $definitions;
-
-
-    /**
-     * ChainProcessorsManager constructor.
-     * @param ContainerInterface $container
-     * @param EtlExecutionRepository $etlExecutionRepository
-     * @param array $definitions
-     */
     public function __construct(
         ContainerInterface $container,
         EtlExecutionRepository $etlExecutionRepository,
-        ChainExecutionLogger $chainExecutionLogger,
-        LoggerInterface $logger,
+        LoggerFactory $loggerFactory,
         array $definitions
     ) {
         $this->container = $container;
         $this->etlExecutionRepository = $etlExecutionRepository;
-        $this->chainExecutionLogger = $chainExecutionLogger;
-        $this->logger = $logger;
+        $this->loggerFactory = $loggerFactory;
         $this->definitions = $definitions;
     }
 
@@ -69,12 +53,12 @@ class ChainProcessorsManager
      * Execute a particular chanin
      *
      * @param string $chainName
-     * @param $iterator
+     * @param iterable $iterator
      * @param array $params
      *
      * @throws \Exception
      */
-    public function execute(string $chainName, $iterator, array $params)
+    public function execute(string $chainName, iterable $iterator, array $params)
     {
         $definition = $this->getDefinition($chainName);
 
@@ -94,13 +78,11 @@ class ChainProcessorsManager
     /**
      * Execute a chain from it's entity.
      *
-     * @param EtlExecution $execution
-     * @param null $iterator
-     * @throws ChainOperationException
      */
-    public function executeFromEtlEntity(EtlExecution $execution, $iterator = null)
+    public function executeFromEtlEntity(EtlExecution $execution, iterable $iterator = null)
     {
         $chainName = $execution->getName();
+        $logger = $this->loggerFactory->get($execution);
 
         try {
             // Update execution object with new status.
@@ -116,18 +98,21 @@ class ChainProcessorsManager
             if (is_null($iterator)) {
                 $iterator = new \ArrayIterator(json_decode($execution->getInputData(), true));
             }
-            $params['etl'] = ['chain' => $chainName, 'startTime' => new \DateTime()];
+            $params['etl'] = [
+                'chain' => $chainName,
+                'startTime' => new \DateTime(),
+                'execution' => $execution
+            ];
 
             // Start the process.
-            $this->chainExecutionLogger->setCurrentExecution($execution);
-            $this->logger->info("Starting etl process!", $params);
+            $logger->info("Starting etl process!", $params);
             $processor->process($iterator, $params);
             $execution->setStatus(EtlExecution::STATUS_SUCCESS);
 
-            $this->logger->info("Finished etl process!", $params);
+            $logger->info("Finished etl process!", $params);
         } catch (\Throwable $exception) {
             $params['exception'] = $exception;
-            $this->logger->info("Failed during etl process!", $params);
+            $logger->info("Failed during etl process!", $params);
 
             $execution->setFailTime(new \DateTime());
             $execution->setStatus(EtlExecution::STATUS_FAILURE);
@@ -138,8 +123,6 @@ class ChainProcessorsManager
             $execution->setRunTime(time() - $execution->getStartTime()->getTimestamp());
             $execution->setStepStats('[]'); // To be developped
             $this->etlExecutionRepository->save($execution);
-
-            $this->chainExecutionLogger->setCurrentExecution(null);
         }
     }
 

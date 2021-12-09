@@ -11,8 +11,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class GetDefinitionCommand extends Command
 {
-    /** @var ChainProcessorsManager */
-    protected $chainProcessorsManager;
+    protected ChainProcessorsManager $chainProcessorsManager;
 
     /**
      * ExecuteCommand constructor.

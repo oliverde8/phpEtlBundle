@@ -1,17 +1,17 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Oliverde8\PhpEtlBundle\Etl\Operation\Cleanup;
-
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oliverde8\Component\PhpEtl\ChainOperation\AbstractChainOperation;
 use Oliverde8\Component\PhpEtl\Item\ItemInterface;
+use Oliverde8\Component\PhpEtl\Model\ExecutionContext;
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
 
 class DeleteEntityForOldExecutionOperation extends AbstractChainOperation
 {
-    /** @var EntityManagerInterface  */
     protected EntityManagerInterface $em;
 
     /**
@@ -23,14 +23,14 @@ class DeleteEntityForOldExecutionOperation extends AbstractChainOperation
         $this->em = $em;
     }
 
-    protected function processData(ItemInterface $item, array &$context)
+    protected function processData(ItemInterface $item, ExecutionContext $context): ItemInterface
     {
         /** @var EtlExecution $entity */
         $entity = $item->getData();
 
         $this->em->remove($entity);
         $this->em->flush();
-        // Method is currently deprecated but has been un-deprecated it doctrine 3.
+        // Method is currently deprecated but has been un-deprecated in doctrine 3.
         $this->em->detach($entity);
     }
 

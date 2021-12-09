@@ -11,13 +11,18 @@
   ],
   "require": {
     "php": ">=7.4.0",
-    "oliverde8/php-etl": "^V0.4.0",
+    "oliverde8/php-etl": "^1.0",
     "symfony/framework-bundle": "^4.4|^5.0",
-    "symfony/messenger": "^4.4|^5.0"
+    "symfony/messenger": "^4.4|^5.0",
+    "ext-json": "*"
   },
   "autoload": {
     "psr-4": {
       "Oliverde8\\PhpEtlBundle\\": "."
     }
+  },
+  "require-dev": {
+    "symfony/monolog-bundle": "^3.7",
+    "symfony/console": "^6.0"
   }
 }

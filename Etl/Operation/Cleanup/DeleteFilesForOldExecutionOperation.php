@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oliverde8\PhpEtlBundle\Etl\Operation\Cleanup;
 
 use Oliverde8\Component\PhpEtl\ChainOperation\AbstractChainOperation;
 use Oliverde8\Component\PhpEtl\Item\ItemInterface;
+use Oliverde8\Component\PhpEtl\Model\ExecutionContext;
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
 use Oliverde8\PhpEtlBundle\Services\ChainWorkDirManager;
 
 class DeleteFilesForOldExecutionOperation extends AbstractChainOperation
 {
-    /** @var ChainWorkDirManager */
-    protected $chainWorkdDirManager;
+    protected ChainWorkDirManager $chainWorkdDirManager;
 
     /**
      * DeleteFilesForOldExecutionOperation constructor.
@@ -21,12 +23,12 @@ class DeleteFilesForOldExecutionOperation extends AbstractChainOperation
         $this->chainWorkdDirManager = $chainWorkdDirManager;
     }
 
-    protected function processData(ItemInterface $item, array &$context)
+    protected function processData(ItemInterface $item, ExecutionContext $context): ItemInterface
     {
         /** @var EtlExecution $entity */
         $entity = $item->getData();
 
-        $executionWorkDir = $this->chainWorkdDirManager->getWorkDir($entity);
+        $executionWorkDir = $this->chainWorkdDirManager->getLocalTmpWorkDir($entity);
         if (!file_exists($executionWorkDir)) {
             return $item;
         }

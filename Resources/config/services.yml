@@ -15,7 +15,7 @@ services:
   Oliverde8\PhpEtlBundle\Services\ChainWorkDirManager:
     class: Oliverde8\PhpEtlBundle\Services\ChainWorkDirManager
     arguments:
-      $baseDir: "%oliverde8.php.etl.base_dir%"
+      $tmpBaseDir: "%oliverde8.php.etl.base_dir%"
 
   # Import etl operation separately.s
   Oliverde8\PhpEtlBundle\Etl\OperationFactory\:
