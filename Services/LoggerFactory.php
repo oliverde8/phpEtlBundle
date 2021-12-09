@@ -11,9 +11,9 @@ class LoggerFactory
 {
     private ChainWorkDirManager $chainWorkDirManager;
 
-    private Logger $etlLogger;
+    private LoggerInterface $etlLogger;
 
-    public function __construct(ChainWorkDirManager $chainWorkDirManager, Logger $etlLogger)
+    public function __construct(ChainWorkDirManager $chainWorkDirManager, LoggerInterface $etlLogger)
     {
         $this->chainWorkDirManager = $chainWorkDirManager;
         $this->etlLogger = $etlLogger;
@@ -25,8 +25,10 @@ class LoggerFactory
         $logPath = $this->chainWorkDirManager->getLocalTmpWorkDir($execution);
         $logger->pushHandler(new StreamHandler("$logPath/execution.logger", Logger::INFO));
 
-        foreach ($this->etlLogger->getHandlers() as $handler) {
-            $logger->pushHandler($handler);
+        if ($this->etlLogger instanceof Logger) {
+            foreach ($this->etlLogger->getHandlers() as $handler) {
+                $logger->pushHandler($handler);
+            }
         }
 
         return $logger;

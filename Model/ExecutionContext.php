@@ -2,18 +2,14 @@
 
 namespace Oliverde8\PhpEtlBundle\Model;
 
-use Monolog\Logger;
+use Oliverde8\Component\PhpEtl\Model\File\FileSystemInterface;
 use Psr\Log\LoggerInterface;
 
 class ExecutionContext extends \Oliverde8\Component\PhpEtl\Model\ExecutionContext
 {
-    protected LoggerInterface $logger;
-
-    /**
-     * @return LoggerInterface
-     */
-    public function getLogger(): LoggerInterface
+    public function __construct(array $parameters, FileSystemInterface $fileSystem, LoggerInterface $logger)
     {
-        return $this->logger;
+        parent::__construct($parameters, $fileSystem);
+        $this->logger = $logger;
     }
 }

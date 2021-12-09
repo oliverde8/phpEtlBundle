@@ -23,7 +23,10 @@ services:
     tags: [ 'etl.operation-factory' ]
 
   Oliverde8\Component\PhpEtl\ChainBuilder:
+    autowire: true
     class: Oliverde8\Component\PhpEtl\ChainBuilder
+    arguments:
+      $contextFactory: "@Oliverde8\\PhpEtlBundle\\Services\\ExecutionContextFactory"
 
   Oliverde8\Component\RuleEngine\RuleApplier:
     class: Oliverde8\Component\RuleEngine\RuleApplier
