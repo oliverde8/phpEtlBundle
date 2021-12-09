@@ -28,7 +28,7 @@ class ChainWorkDirManager
     public function getLocalTmpWorkDir(EtlExecution $execution, $createIfMissing = true): string
     {
         $currentTime = $execution->getCreateTime()->format("y/m/d");
-        $dir = $this->tmpBaseDir . "/" . $currentTime . "/id-" . $execution->getId() . "/";
+        $dir = $this->tmpBaseDir . "/" . $currentTime . "/id-" . $execution->getId();
 
         if ($createIfMissing) {
             $this->tmpFileSystem->mkdir($dir);

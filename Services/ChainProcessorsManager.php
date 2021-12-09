@@ -105,15 +105,9 @@ class ChainProcessorsManager
             ];
 
             // Start the process.
-            $logger->info("Starting etl process!", $params);
             $processor->process($iterator, $params);
             $execution->setStatus(EtlExecution::STATUS_SUCCESS);
-
-            $logger->info("Finished etl process!", $params);
         } catch (\Throwable $exception) {
-            $params['exception'] = $exception;
-            $logger->info("Failed during etl process!", $params);
-
             $execution->setFailTime(new \DateTime());
             $execution->setStatus(EtlExecution::STATUS_FAILURE);
             $execution->setErrorMessage($this->getFullExeptionTrace($exception));

@@ -32,6 +32,7 @@ class DeleteEntityForOldExecutionOperation extends AbstractChainOperation
         $this->em->flush();
         // Method is currently deprecated but has been un-deprecated in doctrine 3.
         $this->em->detach($entity);
-    }
 
+        return $item;
+    }
 }

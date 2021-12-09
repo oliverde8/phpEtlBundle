@@ -24,14 +24,6 @@ class DeleteEntityForOldExecutionFactory extends AbstractFactory
         $this->class = DeleteEntityForOldExecutionOperation::class;
     }
 
-    /**
-     * Build an operation of a certain type with the options.
-     *
-     * @param String $operation
-     * @param array $options
-     *
-     * @return ChainOperationInterface
-     */
     protected function build(string $operation, array $options): ChainOperationInterface
     {
         return $this->create($this->em);

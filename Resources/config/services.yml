@@ -38,3 +38,6 @@ services:
     arguments:
       $minKeep: '%oliverde8.php.etl.min_keep%'
     tags: [ 'etl.operation-factory' ]
+
+  Oliverde8\PhpEtlBundle\Services\FileSystemFactoryInterface: '@Oliverde8\PhpEtlBundle\Services\FileSystemFactory'
+  Oliverde8\PhpEtlBundle\Services\LoggerFactoryInterface: '@Oliverde8\PhpEtlBundle\Services\LoggerFactory'

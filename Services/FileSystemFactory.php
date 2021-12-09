@@ -7,7 +7,7 @@ use Oliverde8\Component\PhpEtl\Model\File\LocalFileSystem;
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
 use Psr\Log\LoggerInterface;
 
-class FileSystemFactory
+class FileSystemFactory implements FileSystemFactoryInterface
 {
     private ChainWorkDirManager $chainWorkDirManager;
 

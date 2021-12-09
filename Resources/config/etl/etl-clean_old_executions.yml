@@ -3,7 +3,7 @@ chain:
   "Find Old Executions":
     operation: Etl/Cleanup/FindOldExecutions
     options:
-      keep: "1 day"
+      keep: "1 month"
   "Delete files for old execution":
     operation: Etl/Cleanup/DeleteFilesForOldExecution
     options:
