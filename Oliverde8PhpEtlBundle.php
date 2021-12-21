@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Oliverde8\PhpEtlBundle;
 
 use Oliverde8\PhpEtlBundle\DependencyInjection\Compiler\ChainBuilderCompiler;

@@ -15,7 +15,7 @@ services:
   Oliverde8\PhpEtlBundle\Services\ChainWorkDirManager:
     class: Oliverde8\PhpEtlBundle\Services\ChainWorkDirManager
     arguments:
-      $baseDir: "%oliverde8.php.etl.base_dir%"
+      $tmpBaseDir: "%oliverde8.php.etl.base_dir%"
 
   # Import etl operation separately.s
   Oliverde8\PhpEtlBundle\Etl\OperationFactory\:
@@ -23,7 +23,10 @@ services:
     tags: [ 'etl.operation-factory' ]
 
   Oliverde8\Component\PhpEtl\ChainBuilder:
+    autowire: true
     class: Oliverde8\Component\PhpEtl\ChainBuilder
+    arguments:
+      $contextFactory: "@Oliverde8\\PhpEtlBundle\\Services\\ExecutionContextFactory"
 
   Oliverde8\Component\RuleEngine\RuleApplier:
     class: Oliverde8\Component\RuleEngine\RuleApplier
@@ -35,3 +38,6 @@ services:
     arguments:
       $minKeep: '%oliverde8.php.etl.min_keep%'
     tags: [ 'etl.operation-factory' ]
+
+  Oliverde8\PhpEtlBundle\Services\FileSystemFactoryInterface: '@Oliverde8\PhpEtlBundle\Services\FileSystemFactory'
+  Oliverde8\PhpEtlBundle\Services\LoggerFactoryInterface: '@Oliverde8\PhpEtlBundle\Services\LoggerFactory'

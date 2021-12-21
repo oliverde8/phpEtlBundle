@@ -6,8 +6,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oliverde8\Component\PhpEtl\Builder\Factories\AbstractFactory;
 use Oliverde8\Component\PhpEtl\ChainOperation\ChainOperationInterface;
 use Oliverde8\PhpEtlBundle\Etl\Operation\Cleanup\DeleteEntityForOldExecutionOperation;
-use Oliverde8\PhpEtlBundle\Repository\EtlExecutionRepository;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class DeleteEntityForOldExecutionFactory extends AbstractFactory
 {
@@ -26,15 +24,7 @@ class DeleteEntityForOldExecutionFactory extends AbstractFactory
         $this->class = DeleteEntityForOldExecutionOperation::class;
     }
 
-    /**
-     * Build an operation of a certain type with the options.
-     *
-     * @param String $operation
-     * @param array $options
-     *
-     * @return ChainOperationInterface
-     */
-    protected function build($operation, $options)
+    protected function build(string $operation, array $options): ChainOperationInterface
     {
         return $this->create($this->em);
     }

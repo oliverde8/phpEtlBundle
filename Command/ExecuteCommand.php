@@ -14,8 +14,7 @@ class ExecuteCommand extends Command
     const ARGUMENT_DATA = "data";
     const ARGUMENT_PARAMS = "params";
 
-    /** @var ChainProcessorsManager */
-    protected $chainProcessorsManager;
+    protected ChainProcessorsManager $chainProcessorsManager;
 
     /**
      * ExecuteCommand constructor.
@@ -26,7 +25,6 @@ class ExecuteCommand extends Command
         parent::__construct();
         $this->chainProcessorsManager = $chainProcessorsManager;
     }
-
 
     protected function configure()
     {

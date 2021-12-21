@@ -6,6 +6,7 @@ use Oliverde8\Component\PhpEtl\Builder\Factories\AbstractFactory;
 use Oliverde8\Component\PhpEtl\ChainOperation\ChainOperationInterface;
 use Oliverde8\PhpEtlBundle\Etl\Operation\Cleanup\FindOldExecutionsOperation;
 use Oliverde8\PhpEtlBundle\Repository\EtlExecutionRepository;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class FindOldExecutionsFactory extends AbstractFactory
@@ -29,15 +30,7 @@ class FindOldExecutionsFactory extends AbstractFactory
     }
 
 
-    /**
-     * Build an operation of a certain type with the options.
-     *
-     * @param String $operation
-     * @param array $options
-     *
-     * @return ChainOperationInterface
-     */
-    protected function build($operation, $options)
+    protected function build(string $operation, array $options): ChainOperationInterface
     {
         return $this->create($this->etlExecutionRepository, $this->getKeepDate($options));
     }
@@ -48,7 +41,7 @@ class FindOldExecutionsFactory extends AbstractFactory
      *
      * @return Constraint
      */
-    protected function configureValidator()
+    protected function configureValidator(): Constraint
     {
         return new Assert\Collection([
             'keep' => new Assert\Type(["type" => "string"])
