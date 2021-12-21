@@ -6,6 +6,7 @@ namespace Oliverde8\PhpEtlBundle\Etl\Operation\Cleanup;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oliverde8\Component\PhpEtl\ChainOperation\AbstractChainOperation;
+use Oliverde8\Component\PhpEtl\Item\DataItemInterface;
 use Oliverde8\Component\PhpEtl\Item\ItemInterface;
 use Oliverde8\Component\PhpEtl\Model\ExecutionContext;
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
@@ -23,7 +24,7 @@ class DeleteEntityForOldExecutionOperation extends AbstractChainOperation
         $this->em = $em;
     }
 
-    protected function processData(ItemInterface $item, ExecutionContext $context): ItemInterface
+    protected function processData(DataItemInterface $item, ExecutionContext $context): ItemInterface
     {
         /** @var EtlExecution $entity */
         $entity = $item->getData();

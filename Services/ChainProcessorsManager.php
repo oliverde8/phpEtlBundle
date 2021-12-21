@@ -7,6 +7,7 @@ use Oliverde8\Component\PhpEtl\Exception\ChainOperationException;
 use Oliverde8\Component\PhpEtl\Item\DataItem;
 use Oliverde8\Component\PhpEtl\Item\DataItemInterface;
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
+use Oliverde8\PhpEtlBundle\Exception\UnknownChainException;
 use Oliverde8\PhpEtlBundle\Repository\EtlExecutionRepository;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -33,8 +34,23 @@ class ChainProcessorsManager
         $this->definitions = $definitions;
     }
 
+    /**
+     * @throws UnknownChainException
+     */
     public function getDefinition(string $chainName): string
     {
+        if (!isset($this->definitions[$chainName])) {
+            $alternatives = [];
+            foreach (array_keys($this->definitions) as $knownId) {
+                $lev = levenshtein($chainName, $knownId);
+                if ($lev <= \strlen($chainName) / 3 || str_contains($knownId, $chainName)) {
+                    $alternatives[] = $knownId;
+                }
+            }
+
+            throw new UnknownChainException("Unknown chain '$chainName', did you mean: " . implode(", ", $alternatives));
+        }
+
         return $this->definitions[$chainName];
     }
 

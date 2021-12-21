@@ -1,3 +1,11 @@
+# 1.0.0
+- :confetti_ball: :tada: First stable release :tada: :confetti_ball:
+- :star2: Added support for php etl 1.0 stable release.
+- :star2: Added support for symfony 6
+- :star2: Better error management, 
+- :star2: File abstraction layer for storing etl related files. (Thanks to elt 1.0)
+- :star2: Logger proxy allows all logs written in etl to have etl context data. (Thanks to elt 1.0)
+
 # 1.0.0 Alpha #3
 - :star2: Split easy admin section into another bundle! **This is a BC change**
 
