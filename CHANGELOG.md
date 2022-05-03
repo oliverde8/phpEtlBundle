@@ -1,3 +1,6 @@
+# 1.0.1
+- :wrench: Fix etl execution not reloaded from database at end of process. This is necessary if the doctrine memory is flushed in the etl process.
+
 # 1.0.0
 - :confetti_ball: :tada: First stable release :tada: :confetti_ball:
 - :star2: Added support for php etl 1.0 stable release.

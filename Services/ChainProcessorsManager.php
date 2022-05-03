@@ -122,6 +122,7 @@ class ChainProcessorsManager
 
             // Start the process.
             $processor->process($iterator, $params);
+            $execution = $this->etlExecutionRepository->find($execution->getId());
             $execution->setStatus(EtlExecution::STATUS_SUCCESS);
         } catch (\Throwable $exception) {
             $execution->setFailTime(new \DateTime());
@@ -129,6 +130,7 @@ class ChainProcessorsManager
             $execution->setErrorMessage($this->getFullExeptionTrace($exception));
             throw $exception;
         } finally {
+            $execution = $this->etlExecutionRepository->find($execution->getId());
             $execution->setEndTime(new \DateTime());
             $execution->setRunTime(time() - $execution->getStartTime()->getTimestamp());
             $execution->setStepStats('[]'); // To be developped
