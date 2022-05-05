@@ -1,5 +1,8 @@
+# 1.0.3
+- :wrench: Fix context & other objects being shared between executions when using Messenger.
+
 # 1.0.2
-- :wrench: Fix incase of failire etl execution being duplicated and loosing logs and files.
+- :wrench: Fix incase of failure etl execution being duplicated and loosing logs and files.
 
 # 1.0.1
 - :wrench: Fix etl execution not reloaded from database at end of process. This is necessary if the doctrine memory is flushed in the etl process.

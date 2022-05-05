@@ -30,6 +30,7 @@ class ChainCompiler implements CompilerPassInterface
 
             // Using public for performance. We should use lazy loading later on which would give same performance.
             $chainDefinition->setPublic(true);
+            $chainDefinition->setShared(false);
         }
 
         $chainProcessorManager->setArgument('$definitions', $chainsString);
