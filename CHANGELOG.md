@@ -1,3 +1,6 @@
+# 1.0.4
+- :wrench: Fix logs not being saved in some conditions.
+- 
 # 1.0.3
 - :wrench: Fix context & other objects being shared between executions when using Messenger.
 
