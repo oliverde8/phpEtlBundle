@@ -2,6 +2,7 @@
 
 namespace Oliverde8\PhpEtlBundle\Model;
 
+use Monolog\Logger;
 use Oliverde8\Component\PhpEtl\Model\File\FileSystemInterface;
 use Oliverde8\Component\PhpEtl\Model\File\LocalFileSystem;
 use Psr\Log\LoggerInterface;
@@ -19,7 +20,11 @@ class ExecutionContext extends \Oliverde8\Component\PhpEtl\Model\ExecutionContex
 
     protected function finalise(): void
     {
-
+        if ($this->logger instanceof Logger) {
+            foreach ($this->logger->getHandlers() as $handler) {
+                $handler->close();
+            }
+        }
 
         if ($this->fileSystem instanceof LocalFileSystem && $this->fileSystem->getRootPath() == $this->workDir) {
             // Local file system needs no moving of the log file.
