@@ -3,45 +3,41 @@
 namespace Oliverde8\PhpEtlBundle\Services;
 
 use Oliverde8\Component\PhpEtl\ChainProcessor;
-use Oliverde8\Component\PhpEtl\Exception\ChainOperationException;
-use Oliverde8\Component\PhpEtl\Item\DataItem;
-use Oliverde8\Component\PhpEtl\Item\DataItemInterface;
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
 use Oliverde8\PhpEtlBundle\Exception\UnknownChainException;
+use Oliverde8\PhpEtlBundle\Factory\ChainFactory;
 use Oliverde8\PhpEtlBundle\Repository\EtlExecutionRepository;
-use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
 
 class ChainProcessorsManager
 {
-    protected ContainerInterface $container;
-
     protected EtlExecutionRepository $etlExecutionRepository;
-
     protected LoggerFactory $loggerFactory;
-
+    protected ChainFactory $chainFactory;
     protected array $definitions;
+    protected array $rewDefinitions;
 
     public function __construct(
-        ContainerInterface $container,
         EtlExecutionRepository $etlExecutionRepository,
         LoggerFactory $loggerFactory,
-        array $definitions
+        ChainFactory $chainFactory,
+        array $definitions,
+        array $rawDefinitions
     ) {
-        $this->container = $container;
         $this->etlExecutionRepository = $etlExecutionRepository;
         $this->loggerFactory = $loggerFactory;
+        $this->chainFactory = $chainFactory;
         $this->definitions = $definitions;
+        $this->rewDefinitions = $rawDefinitions;
     }
 
     /**
      * @throws UnknownChainException
      */
-    public function getDefinition(string $chainName): string
+    public function getRawDefinition(string $chainName): string
     {
-        if (!isset($this->definitions[$chainName])) {
+        if (!isset($this->rewDefinitions[$chainName])) {
             $alternatives = [];
-            foreach (array_keys($this->definitions) as $knownId) {
+            foreach (array_keys($this->rewDefinitions) as $knownId) {
                 $lev = levenshtein($chainName, $knownId);
                 if ($lev <= \strlen($chainName) / 3 || str_contains($knownId, $chainName)) {
                     $alternatives[] = $knownId;
@@ -51,18 +47,25 @@ class ChainProcessorsManager
             throw new UnknownChainException("Unknown chain '$chainName', did you mean: " . implode(", ", $alternatives));
         }
 
-        return $this->definitions[$chainName];
+        return $this->rewDefinitions[$chainName];
     }
 
-    public function getDefinitions(): array
+    public function getRewDefinitions(): array
     {
-        return $this->definitions;
+        return $this->rewDefinitions;
     }
 
-    public function getProcessor(string $chainName): ChainProcessor
+    public function getProcessor(string $chainName, array $options): ChainProcessor
     {
-        // TODO Think about either creating the processor & runtime or injecting them into the constructor like the definitions.
-        return $this->container->get("oliverde8.etl.chain.$chainName");
+        $this->getRawDefinition($chainName);
+        $definition = $this->definitions[$chainName];
+        $chain = $definition['chain'];
+        $maxAsynchronousItems = $definition['maxAsynchronousItems'] ?? 20;
+        $defaultOptions = $definition['defaultOptions'] ?? [];
+
+        $options = array_merge($defaultOptions, $options);
+
+        return $this->chainFactory->create($chain, $options, $maxAsynchronousItems);
     }
 
     /**
@@ -76,7 +79,7 @@ class ChainProcessorsManager
      */
     public function execute(string $chainName, iterable $iterator, array $params)
     {
-        $definition = $this->getDefinition($chainName);
+        $definition = $this->getRawDefinition($chainName);
 
         $inputData = ["Iterator! Can't show input data"];
         if (is_array($iterator)) {
@@ -95,7 +98,7 @@ class ChainProcessorsManager
      * Execute a chain from it's entity.
      *
      */
-    public function executeFromEtlEntity(EtlExecution $execution, iterable $iterator = null)
+    public function executeFromEtlEntity(EtlExecution $execution, iterable $iterator = null): void
     {
         $chainName = $execution->getName();
         $logger = $this->loggerFactory->get($execution);
@@ -108,8 +111,8 @@ class ChainProcessorsManager
             $this->etlExecutionRepository->save($execution);
 
             // Build the processor.
-            $processor = $this->getProcessor($chainName);
             $params = json_decode($execution->getInputOptions(), true);
+            $processor = $this->getProcessor($chainName, $params);
 
             if (is_null($iterator)) {
                 $iterator = new \ArrayIterator(json_decode($execution->getInputData(), true));
@@ -128,7 +131,7 @@ class ChainProcessorsManager
             $execution = $this->etlExecutionRepository->find($execution->getId());
             $execution->setFailTime(new \DateTime());
             $execution->setStatus(EtlExecution::STATUS_FAILURE);
-            $execution->setErrorMessage($this->getFullExeptionTrace($exception));
+            $execution->setErrorMessage($this->getFullExceptionTrace($exception));
             throw $exception;
         } finally {
             $execution->setEndTime(new \DateTime());
@@ -138,7 +141,7 @@ class ChainProcessorsManager
         }
     }
 
-    protected function getFullExeptionTrace(\Throwable $exception)
+    protected function getFullExceptionTrace(\Throwable $exception): string
     {
         $message = '';
         do {

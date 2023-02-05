@@ -23,16 +23,7 @@ class ChainCompiler implements CompilerPassInterface
 
         $chainProcessorManager = $container->getDefinition(ChainProcessorsManager::class);
 
-        foreach ($chainsArray as $chainName => $chain) {
-            $chainDefinition = $container->register("oliverde8.etl.chain.$chainName", ChainProcessor::class);
-            $chainDefinition->setFactory(new Reference(ChainFactory::class));
-            $chainDefinition->setArgument('$config', $chain);
-
-            // Using public for performance. We should use lazy loading later on which would give same performance.
-            $chainDefinition->setPublic(true);
-            $chainDefinition->setShared(false);
-        }
-
-        $chainProcessorManager->setArgument('$definitions', $chainsString);
+        $chainProcessorManager->setArgument('$definitions', $chainsArray);
+        $chainProcessorManager->setArgument('$rawDefinitions', $chainsString);
     }
 }

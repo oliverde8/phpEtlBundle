@@ -13,7 +13,7 @@ class EtlExecutionVoter extends Voter
     const DASHBOARD = 'dashboard';
     const DOWNLOAD = 'download';
 
-    protected function supports($attribute, $subject)
+    protected function supports(string $attribute, mixed $subject): bool
     {
         if ($subject == EtlExecution::class) {
             return true;
@@ -26,7 +26,7 @@ class EtlExecutionVoter extends Voter
         return false;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         return true;
     }

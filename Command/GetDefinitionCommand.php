@@ -36,7 +36,7 @@ class GetDefinitionCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $chainName = $input->getArgument("name");
-        $definition = $this->chainProcessorsManager->getDefinition($chainName);
+        $definition = $this->chainProcessorsManager->getRawDefinition($chainName);
 
         echo Yaml::dump($definition, 4);
         return 0;

@@ -5,6 +5,7 @@ namespace Oliverde8\PhpEtlBundle\Factory;
 
 
 use Oliverde8\Component\PhpEtl\ChainBuilder;
+use Oliverde8\Component\PhpEtl\ChainProcessor;
 
 class ChainFactory
 {
@@ -20,8 +21,8 @@ class ChainFactory
         $this->chainBuilder = $chainBuilder;
     }
 
-    public function __invoke($config)
+    public function create($config, array $inputOptions, int $maxAsynchronousItems): ChainProcessor
     {
-        return $this->chainBuilder->buildChainProcessor($config);
+        return $this->chainBuilder->buildChainProcessor($config, $inputOptions, $maxAsynchronousItems);
     }
 }

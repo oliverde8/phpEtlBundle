@@ -1,3 +1,12 @@
+# 1.1.0
+
+- :star2: Support for php-etl 1.1 new operations has been added.
+- :star2: Support for symfony 6.0 has been added.
+- :star2: Support for using input parameters in operation options has been added.
+- :collision: All operations are no longer built during DI compilation. This should improve peformance of cache warmup.
+- :collision: Support for Symfony 4.4 has been dropped.
+- :collision: Support for php 7.4 has been dropped.
+
 # 1.0.4
 - :wrench: Fix logs not being saved in some conditions.
 - 

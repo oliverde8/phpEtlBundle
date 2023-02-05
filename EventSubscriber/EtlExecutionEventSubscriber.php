@@ -50,7 +50,7 @@ class EtlExecutionEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $definition = $this->chainProcessorManager->getDefinition($entity->getName());
+        $definition = $this->chainProcessorManager->getRawDefinition($entity->getName());
         $entity->setDefinition($definition);
         $entity->setStatus(EtlExecution::STATUS_WAITING);
     }

@@ -1,10 +1,74 @@
 services:
+  #
+  # Low Level Operation Builders
+  #
+  Oliverde8\Component\PhpEtl\Builder\Factories\ChainSplitFactory:
+    class: Oliverde8\Component\PhpEtl\Builder\Factories\ChainSplitFactory
+    autowire: true
+    arguments:
+      $operation: 'split'
+      $class: 'Oliverde8\Component\PhpEtl\ChainOperation\ChainSplitOperation'
+    tags:
+      - { name: etl.operation-factory }
+
+  #
+  # Extraction Operation Builders
+  #
+  Oliverde8\Component\PhpEtl\Builder\Factories\Extract\JsonExtractFactory:
+    class: Oliverde8\Component\PhpEtl\Builder\Factories\Extract\JsonExtractFactory
+    autowire: true
+    arguments:
+      $operation: 'json-read'
+      $class: 'Oliverde8\Component\PhpEtl\ChainOperation\Extract\JsonExtractOperation'
+    tags:
+      - { name: etl.operation-factory }
+
+  Oliverde8\Component\PhpEtl\Builder\Factories\Extract\CsvExtractFactory:
+    class: Oliverde8\Component\PhpEtl\Builder\Factories\Extract\CsvExtractFactory
+    autowire: true
+    arguments:
+      $operation: 'csv-read'
+      $class: 'Oliverde8\Component\PhpEtl\ChainOperation\Extract\CsvExtractOperation'
+    tags:
+      - { name: etl.operation-factory }
+
+
+  #
+  # Transformation Operation Builders.
+  #
+  Oliverde8\Component\PhpEtl\Builder\Factories\Transformer\FilterDataFactory:
+    class: Oliverde8\Component\PhpEtl\Builder\Factories\Transformer\FilterDataFactory
+    autowire: true
+    arguments:
+      $operation: 'filter'
+      $class: 'Oliverde8\Component\PhpEtl\ChainOperation\Transformer\FilterDataOperation'
+    tags:
+      - { name: etl.operation-factory }
+
   Oliverde8\Component\PhpEtl\Builder\Factories\Transformer\RuleTransformFactory:
     class: Oliverde8\Component\PhpEtl\Builder\Factories\Transformer\RuleTransformFactory
     autowire: true
     arguments:
       $operation: 'rule-engine-transformer'
       $class: 'Oliverde8\Component\PhpEtl\ChainOperation\Transformer\RuleTransformOperation'
+    tags:
+      - { name: etl.operation-factory }
+
+  Oliverde8\Component\PhpEtl\Builder\Factories\Transformer\SplitItemFactory:
+    class: Oliverde8\Component\PhpEtl\Builder\Factories\Transformer\SplitItemFactory
+    autowire: true
+    arguments:
+      $operation: 'item-split'
+      $class: 'Oliverde8\Component\PhpEtl\ChainOperation\Transformer\SplitItemOperation'
+    tags:
+      - { name: etl.operation-factory }
+
+  Oliverde8\Component\PhpEtl\Builder\Factories\Transformer\SimpleHttpOperationFactory:
+    class: Oliverde8\Component\PhpEtl\Builder\Factories\Transformer\SimpleHttpOperationFactory
+    autowire: true
+    arguments:
+      $operation: 'http'
+      $class: 'Oliverde8\Component\PhpEtl\ChainOperation\Transformer\SimpleHttpOperation'
     tags:
       - { name: etl.operation-factory }
 
@@ -17,11 +81,24 @@ services:
     tags:
       - { name: etl.operation-factory }
 
+  #
+  # Load Operation Builders.
+  #
+
   Oliverde8\Component\PhpEtl\Builder\Factories\Loader\CsvFileWriterFactory:
     class: Oliverde8\Component\PhpEtl\Builder\Factories\Loader\CsvFileWriterFactory
     autowire: true
     arguments:
       $operation: 'csv-write'
+      $class: 'Oliverde8\Component\PhpEtl\ChainOperation\Loader\FileWriterOperation'
+    tags:
+      - { name: etl.operation-factory }
+
+  Oliverde8\Component\PhpEtl\Builder\Factories\Loader\JsonFileWriterFactory:
+    class: Oliverde8\Component\PhpEtl\Builder\Factories\Loader\JsonFileWriterFactory
+    autowire: true
+    arguments:
+      $operation: 'json-write'
       $class: 'Oliverde8\Component\PhpEtl\ChainOperation\Loader\FileWriterOperation'
     tags:
       - { name: etl.operation-factory }
