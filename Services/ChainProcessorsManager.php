@@ -77,7 +77,7 @@ class ChainProcessorsManager
      *
      * @throws \Exception
      */
-    public function execute(string $chainName, iterable $iterator, array $params)
+    public function execute(string $chainName, iterable $iterator, array $params,  ?callable $observerCallback = null)
     {
         $definition = $this->getRawDefinition($chainName);
 
@@ -91,14 +91,14 @@ class ChainProcessorsManager
         $execution->setStatus(EtlExecution::STATUS_RUNNING);
         $this->etlExecutionRepository->save($execution);
 
-        $this->executeFromEtlEntity($execution, $iterator);
+        $this->executeFromEtlEntity($execution, $iterator, $observerCallback);
     }
 
     /**
      * Execute a chain from it's entity.
      *
      */
-    public function executeFromEtlEntity(EtlExecution $execution, iterable $iterator = null): void
+    public function executeFromEtlEntity(EtlExecution $execution, iterable $iterator = null, ?callable $observerCallback = null): void
     {
         $chainName = $execution->getName();
         $logger = $this->loggerFactory->get($execution);
@@ -124,7 +124,7 @@ class ChainProcessorsManager
             ];
 
             // Start the process.
-            $processor->process($iterator, $params);
+            $processor->process($iterator, $params, $observerCallback);
             $execution = $this->etlExecutionRepository->find($execution->getId());
             $execution->setStatus(EtlExecution::STATUS_SUCCESS);
         } catch (\Throwable $exception) {
