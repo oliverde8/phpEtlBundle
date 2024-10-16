@@ -48,8 +48,8 @@ class ExecuteCommand extends Command
         $data = json_decode($input->getArgument(self::ARGUMENT_DATA) ?? '[]', true);
 
         $processorOutput = new SymfonyConsoleOutput($output, 0);
-        $observation = function (array $operationStates) use ($processorOutput) {
-            $processorOutput->output($operationStates);
+        $observation = function (array $operationStates, int $processedItems, int $returnedItems, bool $hasFinished = false) use ($processorOutput) {
+            $processorOutput->output($operationStates, $hasFinished);
         };
         if ($input->getOption(self::OPTION_PRETTY)) {
             $observation = function (array $operationStates)  {};
