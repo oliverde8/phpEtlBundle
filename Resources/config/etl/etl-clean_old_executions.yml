@@ -6,7 +6,7 @@ chain:
       keep: "1 month"
   "Delete files for old execution":
     operation: Etl/Cleanup/DeleteFilesForOldExecution
-    options:
+    options: []
   "Delete old execution from database":
     operation: Etl/Cleanup/DeleteEntityForOldExecution
-    options:
+    options: []
