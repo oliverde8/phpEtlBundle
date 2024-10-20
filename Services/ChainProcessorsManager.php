@@ -132,8 +132,8 @@ class ChainProcessorsManager
                 if ((time() - $observerProcessTime) > 5 || $hasFinished) {
                     $execution = $this->etlExecutionRepository->find($execution->getId());
                     $execution->setStepStats(json_encode($operationStates));
-                    $this->etlExecutionRepository->save($execution);
 
+                    $this->etlExecutionRepository->save($execution);
                     $observerProcessTime = time();
                 }
             });
