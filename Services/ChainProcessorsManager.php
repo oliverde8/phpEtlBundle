@@ -7,6 +7,7 @@ use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
 use Oliverde8\PhpEtlBundle\Exception\UnknownChainException;
 use Oliverde8\PhpEtlBundle\Factory\ChainFactory;
 use Oliverde8\PhpEtlBundle\Repository\EtlExecutionRepository;
+use function Clue\StreamFilter\fun;
 
 class ChainProcessorsManager
 {
@@ -124,7 +125,18 @@ class ChainProcessorsManager
             ];
 
             // Start the process.
-            $processor->process($iterator, $params, $observerCallback);
+            $observerProcessTime = 0;
+            $processor->process($iterator, $params, function (array $operationStates, int $processedItems, int $returnedItems, bool $hasFinished = false) use ($observerCallback, &$observerProcessTime, $execution) {
+                $observerCallback($operationStates, $processedItems, $returnedItems, $hasFinished);
+
+                if ((time() - $observerProcessTime) > 5 || $hasFinished) {
+                    $execution = $this->etlExecutionRepository->find($execution->getId());
+                    $execution->setStepStats(json_encode($operationStates));
+                    $this->etlExecutionRepository->save($execution);
+
+                    $observerProcessTime = time();
+                }
+            });
             $execution = $this->etlExecutionRepository->find($execution->getId());
             $execution->setStatus(EtlExecution::STATUS_SUCCESS);
         } catch (\Throwable $exception) {
@@ -136,7 +148,6 @@ class ChainProcessorsManager
         } finally {
             $execution->setEndTime(new \DateTime());
             $execution->setRunTime(time() - $execution->getStartTime()->getTimestamp());
-            $execution->setStepStats('[]'); // To be developped
             $this->etlExecutionRepository->save($execution);
         }
     }
