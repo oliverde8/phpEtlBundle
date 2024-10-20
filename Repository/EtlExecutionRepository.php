@@ -14,7 +14,7 @@ use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
  */
 class EtlExecutionRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(protected readonly ManagerRegistry $registry)
     {
         parent::__construct($registry, EtlExecution::class);
     }
@@ -22,7 +22,25 @@ class EtlExecutionRepository extends ServiceEntityRepository
     public function save(EtlExecution $execution)
     {
         $this->_em->persist($execution);
-        $this->_em->flush();
+        $this->_em->flush($execution);
+    }
+
+    public function updateStepStats(EtlExecution $execution, string $stepStats)
+    {
+        /** @var \Doctrine\DBAL\Connection $connection */
+        $connection = $this->registry->getConnection();
+
+        $query = $connection->createQueryBuilder()
+            ->update('EtlExecution', 'e')
+            ->set('e.stepStats', ':stepStats')
+            ->where('e.id = :executionId')
+            ->setParameter('stepStats', $stepStats)
+            ->setParameter('executionId', $execution->getId());
+        $query->execute();
+
+        if ($connection->getTransactionNestingLevel() > 0) {
+            $query->getConnection()->commit();
+        }
     }
 
     public function getCountInStatus(\DateTime $startTime, \DateTime $endTime, string $status): int

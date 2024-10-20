@@ -1,0 +1,26 @@
+{
+  "name": "@oliverde8/php-etl-graph-reload",
+  "description": "",
+  "version": "1.0.0",
+    "license": "MIT",
+    "symfony": {
+        "controllers": {
+            "oliverde8-etl-graph-reload": {
+                "main": "controllers/graph_reload.js",
+                "name": "oliverde8-etl-graph-reload",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            }
+        },
+        "importmap": {
+            "@hotwired/stimulus": "^3.0.0"
+        }
+    },
+    "dependencies": {
+      "mermaid": "^1.13"
+    },
+    "peerDependencies": {
+        "@hotwired/stimulus": "^3.0.0"
+    }
+}

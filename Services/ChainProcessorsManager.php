@@ -127,13 +127,14 @@ class ChainProcessorsManager
             // Start the process.
             $observerProcessTime = 0;
             $processor->process($iterator, $params, function (array $operationStates, int $processedItems, int $returnedItems, bool $hasFinished = false) use ($observerCallback, &$observerProcessTime, $execution) {
-                $observerCallback($operationStates, $processedItems, $returnedItems, $hasFinished);
+                if ($observerCallback) {
+                    $observerCallback($operationStates, $processedItems, $returnedItems, $hasFinished);
+                }
 
                 if ((time() - $observerProcessTime) > 5 || $hasFinished) {
-                    $execution = $this->etlExecutionRepository->find($execution->getId());
-                    $execution->setStepStats(json_encode($operationStates));
-
-                    $this->etlExecutionRepository->save($execution);
+                    $jsonStates = json_encode($operationStates);
+                    $execution->setStepStats($jsonStates);
+                    $this->etlExecutionRepository->updateStepStats($execution, $jsonStates);
                     $observerProcessTime = time();
                 }
             });
