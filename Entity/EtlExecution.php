@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=EtlExecutionRepository::class)
+ *
  */
 class EtlExecution
 {
@@ -255,7 +256,7 @@ class EtlExecution
     {
         $this->runTime = $runTime;
     }
-    
+
     /**
      * @return mixed
      */
@@ -286,6 +287,10 @@ class EtlExecution
 
     public function getStepStats(): ?string
     {
+        if ($this->stepStats == "[]") {
+            // Legacy json stuff.
+            return null;
+        }
         return $this->stepStats;
     }
 

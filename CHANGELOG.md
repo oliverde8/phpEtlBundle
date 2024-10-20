@@ -1,8 +1,10 @@
 # 1.1.0
 
-- :star2: Support for php-etl 1.1 new operations has been added.
+- :star2: Support for php-etl 1.2 new operations has been added. (Skipped 1.1)
 - :star2: Support for symfony 6.0 has been added.
 - :star2: Support for using input parameters in operation options has been added.
+- :star2: Added support to the command line to displayt ETL progress, (feature from php-etl 1.2)
+- :star2: Etl progress information is now saved on the execution entity(updated every 5 seconds)
 - :collision: All operations are no longer built during DI compilation. This should improve peformance of cache warmup.
 - :collision: Support for Symfony 4.4 has been dropped.
 - :collision: Support for php 7.4 has been dropped.
