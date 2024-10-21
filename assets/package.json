@@ -18,7 +18,7 @@
         }
     },
     "dependencies": {
-      "mermaid": "^1.13"
+      "mermaid": "^11.3.0"
     },
     "peerDependencies": {
         "@hotwired/stimulus": "^3.0.0"
