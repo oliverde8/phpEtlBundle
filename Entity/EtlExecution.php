@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=EtlExecutionRepository::class)
- *
  */
 class EtlExecution
 {
@@ -98,7 +97,7 @@ class EtlExecution
      * @param string $name
      * @param string $definition
      */
-    public function __construct(string $name, string $definition, array $inputData, array $inputOptions)
+    public function __construct(string $name = "", string $definition = "", array $inputData = [], array $inputOptions = [])
     {
         $this->name = $name;
         $this->definition = $definition;
@@ -120,9 +119,9 @@ class EtlExecution
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
-        $this->name = $name;
+        $this->name = $name ?? "";
 
         return $this;
     }
@@ -278,9 +277,9 @@ class EtlExecution
         return $this->definition;
     }
 
-    public function setDefinition(string $definition): self
+    public function setDefinition(?string $definition): self
     {
-        $this->definition = $definition;
+        $this->definition = $definition ?? "";
 
         return $this;
     }
