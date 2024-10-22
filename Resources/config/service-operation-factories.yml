@@ -72,6 +72,15 @@ services:
     tags:
       - { name: etl.operation-factory }
 
+  Oliverde8\Component\PhpEtl\Builder\Factories\Transformer\LogFactory:
+    class: Oliverde8\Component\PhpEtl\Builder\Factories\Transformer\LogFactory
+    autowire: true
+    arguments:
+      $operation: 'log'
+      $class: 'Oliverde8\Component\PhpEtl\ChainOperation\Transformer\LogOperation'
+    tags:
+      - { name: etl.operation-factory }
+
   Oliverde8\Component\PhpEtl\Builder\Factories\Grouping\SimpleGroupingFactory:
     class: Oliverde8\Component\PhpEtl\Builder\Factories\Grouping\SimpleGroupingFactory
     autowire: true
