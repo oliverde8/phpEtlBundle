@@ -81,9 +81,13 @@ class ChainProcessorsManager
     public function execute(string $chainName, iterable $iterator, array $params,  ?callable $observerCallback = null)
     {
         $definition = $this->getRawDefinition($chainName);
+        $definitionArray = $this->definitions[$chainName];
 
         $inputData = ["Iterator! Can't show input data"];
-        if (is_array($iterator)) {
+        if (is_array($iterator) && empty($iterator) && isset($definitionArray['defaultInput'])) {
+            $inputData = $definitionArray['defaultInput'];
+            $iterator = new \ArrayIterator($definitionArray['defaultInput']);
+        } elseif (is_array($iterator)) {
             $inputData = $iterator;
             $iterator = new \ArrayIterator($iterator);
         }
