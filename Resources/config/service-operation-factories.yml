@@ -11,6 +11,15 @@ services:
     tags:
       - { name: etl.operation-factory }
 
+  Oliverde8\Component\PhpEtl\Builder\Factories\ChainRepeatFactory:
+      class: Oliverde8\Component\PhpEtl\Builder\Factories\ChainRepeatFactory
+      autowire: true
+      arguments:
+          $operation: 'repeat'
+          $class: 'Oliverde8\Component\PhpEtl\ChainOperation\ChainRepeatOperation'
+      tags:
+          - { name: etl.operation-factory }
+
   #
   # Extraction Operation Builders
   #
