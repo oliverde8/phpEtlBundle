@@ -20,6 +20,15 @@ services:
       tags:
           - { name: etl.operation-factory }
 
+  Oliverde8\Component\PhpEtl\Builder\Factories\ChainMergeFactory:
+      class: Oliverde8\Component\PhpEtl\Builder\Factories\ChainSplitFactory
+      autowire: true
+      arguments:
+          $operation: 'merge'
+          $class: 'Oliverde8\Component\PhpEtl\ChainOperation\ChainMergeOperation'
+      tags:
+          - { name: etl.operation-factory }
+
   #
   # Extraction Operation Builders
   #
@@ -102,7 +111,6 @@ services:
   #
   # Load Operation Builders.
   #
-
   Oliverde8\Component\PhpEtl\Builder\Factories\Loader\CsvFileWriterFactory:
     class: Oliverde8\Component\PhpEtl\Builder\Factories\Loader\CsvFileWriterFactory
     autowire: true
