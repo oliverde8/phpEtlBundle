@@ -30,7 +30,7 @@ class GetDefinitionGraphCommand extends Command
     }
 
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("etl:definition:graph");
         $this->addArgument("name", InputArgument::REQUIRED);
@@ -40,7 +40,7 @@ class GetDefinitionGraphCommand extends Command
     /**
      * @throws \Oliverde8\Component\PhpEtl\Exception\ChainOperationException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $sfs = new SymfonyStyle($input, $output);
 

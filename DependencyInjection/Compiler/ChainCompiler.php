@@ -16,7 +16,7 @@ class ChainCompiler implements CompilerPassInterface
     /**
      * You can modify the container here before it is dumped to PHP code.
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $chainsArray = $container->getParameter("oliverde8-php-etl_chain");
         $chainsString = $container->getParameter("oliverde8-php-etl_chain__string");

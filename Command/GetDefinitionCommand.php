@@ -24,7 +24,7 @@ class GetDefinitionCommand extends Command
     }
 
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("etl:get-definition");
         $this->addArgument("name", InputArgument::REQUIRED);
@@ -33,7 +33,7 @@ class GetDefinitionCommand extends Command
     /**
      * @throws \Oliverde8\Component\PhpEtl\Exception\ChainOperationException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $chainName = $input->getArgument("name");
         $definition = $this->chainProcessorsManager->getRawDefinition($chainName);

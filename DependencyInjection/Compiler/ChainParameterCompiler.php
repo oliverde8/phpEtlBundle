@@ -16,7 +16,7 @@ class ChainParameterCompiler implements CompilerPassInterface
     /**
      * You can modify the container here before it is dumped to PHP code.
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definitionsArray = [];
         $definitionsString = [];

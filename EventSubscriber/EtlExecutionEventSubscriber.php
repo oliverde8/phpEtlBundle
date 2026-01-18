@@ -35,7 +35,7 @@ class EtlExecutionEventSubscriber implements EventSubscriberInterface
         $this->messageBus = $messageBus;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             BeforeEntityPersistedEvent::class => ['setChainDetails'],

@@ -29,7 +29,7 @@ class ExecuteCommand extends Command
         $this->chainProcessorsManager = $chainProcessorsManager;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("etl:execute");
         $this->addArgument(self::ARGUMENT_NAME, InputArgument::REQUIRED);
@@ -41,7 +41,7 @@ class ExecuteCommand extends Command
     /**
      * @throws \Oliverde8\Component\PhpEtl\Exception\ChainOperationException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $chainName = $input->getArgument(self::ARGUMENT_NAME);
         $options = json_decode($input->getArgument(self::ARGUMENT_PARAMS) ?? '[]', true);
