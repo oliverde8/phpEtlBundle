@@ -5,9 +5,10 @@ namespace Oliverde8\PhpEtlBundle\MessageHandler;
 use Oliverde8\PhpEtlBundle\Message\EtlExecutionMessage;
 use Oliverde8\PhpEtlBundle\Repository\EtlExecutionRepository;
 use Oliverde8\PhpEtlBundle\Services\ChainProcessorsManager;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-class EtlExecutionHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class EtlExecutionHandler
 {
     /** @var ChainProcessorsManager */
     protected $chainProcessorManager;

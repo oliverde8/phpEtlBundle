@@ -5,24 +5,22 @@ declare(strict_types=1);
 namespace Oliverde8\PhpEtlBundle\Etl\Operation\Cleanup;
 
 use Oliverde8\Component\PhpEtl\ChainOperation\AbstractChainOperation;
+use Oliverde8\Component\PhpEtl\ChainOperation\ConfigurableChainOperationInterface;
 use Oliverde8\Component\PhpEtl\Item\DataItemInterface;
 use Oliverde8\Component\PhpEtl\Item\ItemInterface;
 use Oliverde8\Component\PhpEtl\Model\ExecutionContext;
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
+use Oliverde8\PhpEtlBundle\Etl\OperationConfig\Cleanup\DeleteFilesForOldExecutionConfig;
 use Oliverde8\PhpEtlBundle\Services\ChainWorkDirManager;
 use Oliverde8\PhpEtlBundle\Services\FileSystemFactoryInterface;
 
-class DeleteFilesForOldExecutionOperation extends AbstractChainOperation
+class DeleteFilesForOldExecutionOperation extends AbstractChainOperation implements ConfigurableChainOperationInterface
 {
-    protected ChainWorkDirManager $chainWorkDirManager;
-
-    protected FileSystemFactoryInterface $fileSystemFactory;
-
-    public function __construct(ChainWorkDirManager $chainWorkDirManager, FileSystemFactoryInterface $fileSystemFactory)
-    {
-        $this->chainWorkDirManager = $chainWorkDirManager;
-        $this->fileSystemFactory = $fileSystemFactory;
-    }
+    public function __construct(
+        private readonly DeleteFilesForOldExecutionConfig $config,
+        private readonly ChainWorkDirManager $chainWorkDirManager,
+        private readonly FileSystemFactoryInterface $fileSystemFactory
+    ){}
 
     protected function processData(DataItemInterface $item, ExecutionContext $context): ItemInterface
     {
@@ -54,7 +52,7 @@ class DeleteFilesForOldExecutionOperation extends AbstractChainOperation
 
         return $item;
     }
-    
+
     protected function deleteDirectory(string $dir) {
         if (!file_exists($dir)) {
             return true;

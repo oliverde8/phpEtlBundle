@@ -2,43 +2,43 @@
 
 namespace Oliverde8\PhpEtlBundle\Services;
 
+use Oliverde8\Component\PhpEtl\ChainBuilderV2;
 use Oliverde8\Component\PhpEtl\ChainProcessor;
 use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
+use Oliverde8\PhpEtlBundle\Etl\ChainDefinitionInterface\ChainDefinitionInterface;
 use Oliverde8\PhpEtlBundle\Exception\UnknownChainException;
 use Oliverde8\PhpEtlBundle\Factory\ChainFactory;
 use Oliverde8\PhpEtlBundle\Repository\EtlExecutionRepository;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use function Clue\StreamFilter\fun;
 
 class ChainProcessorsManager
 {
-    protected EtlExecutionRepository $etlExecutionRepository;
-    protected LoggerFactory $loggerFactory;
-    protected ChainFactory $chainFactory;
-    protected array $definitions;
-    protected array $rewDefinitions;
 
     public function __construct(
-        EtlExecutionRepository $etlExecutionRepository,
-        LoggerFactory $loggerFactory,
-        ChainFactory $chainFactory,
-        array $definitions,
-        array $rawDefinitions
-    ) {
-        $this->etlExecutionRepository = $etlExecutionRepository;
-        $this->loggerFactory = $loggerFactory;
-        $this->chainFactory = $chainFactory;
-        $this->definitions = $definitions;
-        $this->rewDefinitions = $rawDefinitions;
-    }
+        protected readonly EtlExecutionRepository $etlExecutionRepository,
+        protected readonly LoggerFactory $loggerFactory,
+        protected readonly ChainFactory $chainFactory,
+        protected readonly array $definitions,
+        protected readonly array $rawDefinitions,
+        #[AutowireIterator('etl.chain_definition')]
+        /** @var ChainDefinitionInterface[] */
+        protected readonly iterable $v2ChainDefinitions,
+    ) {}
 
     /**
      * @throws UnknownChainException
      */
-    public function getRawDefinition(string $chainName): string
+    public function getRawDefinition(string $chainName): string | ChainDefinitionInterface
     {
-        if (!isset($this->rewDefinitions[$chainName])) {
+        foreach ($this->v2ChainDefinitions as $v2ChainDefinition) {
+            if ($v2ChainDefinition->getKey() === $chainName) {
+                return $v2ChainDefinition;
+            }
+        }
+        if (!isset($this->rawDefinitions[$chainName])) {
             $alternatives = [];
-            foreach (array_keys($this->rewDefinitions) as $knownId) {
+            foreach (array_keys($this->rawDefinitions) as $knownId) {
                 $lev = levenshtein($chainName, $knownId);
                 if ($lev <= \strlen($chainName) / 3 || str_contains($knownId, $chainName)) {
                     $alternatives[] = $knownId;
@@ -48,17 +48,20 @@ class ChainProcessorsManager
             throw new UnknownChainException("Unknown chain '$chainName', did you mean: " . implode(", ", $alternatives));
         }
 
-        return $this->rewDefinitions[$chainName];
+        return $this->rawDefinitions[$chainName];
     }
 
-    public function getRewDefinitions(): array
+    public function getRawDefinitions(): array
     {
-        return $this->rewDefinitions;
+        return $this->rawDefinitions;
     }
 
     public function getProcessor(string $chainName, array $options): ChainProcessor
     {
-        $this->getRawDefinition($chainName);
+        $definition = $this->getRawDefinition($chainName);
+        if (!is_string($definition)) {
+            return $this->chainFactory->createFromDefinition($definition);
+        }
         $definition = $this->definitions[$chainName];
         $chain = $definition['chain'];
         $maxAsynchronousItems = $definition['maxAsynchronousItems'] ?? 20;
@@ -81,7 +84,7 @@ class ChainProcessorsManager
     public function execute(string $chainName, iterable $iterator, array $params,  ?callable $observerCallback = null)
     {
         $definition = $this->getRawDefinition($chainName);
-        $definitionArray = $this->definitions[$chainName];
+        $definitionArray = $this->definitions[$chainName] ?? [];
 
         $inputData = ["Iterator! Can't show input data"];
         if (is_array($iterator) && empty($iterator) && isset($definitionArray['defaultInput'])) {
@@ -92,7 +95,7 @@ class ChainProcessorsManager
             $iterator = new \ArrayIterator($iterator);
         }
 
-        $execution = new EtlExecution($chainName, $definition, $inputData, $params);
+        $execution = new EtlExecution($chainName, "", $inputData, $params);
         $execution->setStatus(EtlExecution::STATUS_RUNNING);
         $this->etlExecutionRepository->save($execution);
 

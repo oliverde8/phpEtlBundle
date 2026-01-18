@@ -3,18 +3,16 @@
 namespace Oliverde8\PhpEtlBundle\Etl\Operation\Cleanup;
 
 use Oliverde8\Component\PhpEtl\ChainOperation\AbstractChainOperation;
+use Oliverde8\Component\PhpEtl\ChainOperation\ConfigurableChainOperationInterface;
 use Oliverde8\Component\PhpEtl\Item\GroupedItem;
 use Oliverde8\Component\PhpEtl\Item\ItemInterface;
 use Oliverde8\Component\PhpEtl\Item\StopItem;
 use Oliverde8\Component\PhpEtl\Model\ExecutionContext;
+use Oliverde8\PhpEtlBundle\Etl\OperationConfig\Cleanup\FindOldExecutionConfig;
 use Oliverde8\PhpEtlBundle\Repository\EtlExecutionRepository;
 
-class FindOldExecutionsOperation extends AbstractChainOperation
+class FindOldExecutionsOperation extends AbstractChainOperation implements ConfigurableChainOperationInterface
 {
-    protected EtlExecutionRepository $etlExecutionRepository;
-
-    protected \DateTime $minKeep;
-
     protected $endProcess = false;
 
     /**
@@ -22,11 +20,8 @@ class FindOldExecutionsOperation extends AbstractChainOperation
      * @param EtlExecutionRepository $etlExecutionRepository
      * @param string $minKeep
      */
-    public function __construct(EtlExecutionRepository $etlExecutionRepository, \DateTime $minKeep)
-    {
-        $this->etlExecutionRepository = $etlExecutionRepository;
-        $this->minKeep = $minKeep;
-    }
+    public function __construct(private readonly FindOldExecutionConfig $config, private readonly EtlExecutionRepository $etlExecutionRepository)
+    {}
 
     protected function processStop(StopItem $item, ExecutionContext $context): ItemInterface
     {
@@ -35,7 +30,7 @@ class FindOldExecutionsOperation extends AbstractChainOperation
         }
 
         $this->endProcess = true;
-        $iterator = $this->etlExecutionRepository->getOldExecutions($this->minKeep);
+        $iterator = $this->etlExecutionRepository->getOldExecutions($this->config->minKeep);
 
         return new GroupedItem($iterator);
     }

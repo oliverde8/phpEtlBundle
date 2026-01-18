@@ -25,5 +25,7 @@ class ChainCompiler implements CompilerPassInterface
 
         $chainProcessorManager->setArgument('$definitions', $chainsArray);
         $chainProcessorManager->setArgument('$rawDefinitions', $chainsString);
+
+
     }
 }

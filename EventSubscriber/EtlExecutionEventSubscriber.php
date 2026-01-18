@@ -37,6 +37,9 @@ class EtlExecutionEventSubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents(): array
     {
+        if (!class_exists(AfterEntityPersistedEvent::class)) {
+            return [];
+        }
         return [
             BeforeEntityPersistedEvent::class => ['setChainDetails'],
             AfterEntityPersistedEvent::class => ['queueChainExecution'],

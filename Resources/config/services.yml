@@ -10,17 +10,16 @@ services:
       - '../../DependencyInjection/'
       - '../..//Entity/'
       - '../../Tests/'
-      - '../../Etl/Operation'
+
+  # Register ETL operations separately with autowiring
+  Oliverde8\PhpEtlBundle\Etl\Operation\:
+    resource: '../../Etl/Operation/'
+    autowire: true
 
   Oliverde8\PhpEtlBundle\Services\ChainWorkDirManager:
     class: Oliverde8\PhpEtlBundle\Services\ChainWorkDirManager
     arguments:
       $tmpBaseDir: "%oliverde8.php.etl.base_dir%"
-
-  # Import etl operation separately.s
-  Oliverde8\PhpEtlBundle\Etl\OperationFactory\:
-    resource: '../../Etl/OperationFactory/'
-    tags: [ 'etl.operation-factory' ]
 
   Oliverde8\Component\PhpEtl\ChainBuilder:
     autowire: true
@@ -28,16 +27,18 @@ services:
     arguments:
       $contextFactory: "@Oliverde8\\PhpEtlBundle\\Services\\ExecutionContextFactory"
 
+  Oliverde8\Component\PhpEtl\ChainBuilderV2:
+      autowire: true
+      class: Oliverde8\Component\PhpEtl\ChainBuilderV2
+      arguments:
+          $contextFactory: "@Oliverde8\\PhpEtlBundle\\Services\\ExecutionContextFactory"
+
   Oliverde8\Component\RuleEngine\RuleApplier:
     class: Oliverde8\Component\RuleEngine\RuleApplier
     arguments:
       $rules: [ ]
       $validate: true
 
-  Oliverde8\PhpEtlBundle\Etl\OperationFactory\Cleanup\FindOldExecutionsFactory:
-    arguments:
-      $minKeep: '%oliverde8.php.etl.min_keep%'
-    tags: [ 'etl.operation-factory' ]
-
   Oliverde8\PhpEtlBundle\Services\FileSystemFactoryInterface: '@Oliverde8\PhpEtlBundle\Services\FileSystemFactory'
   Oliverde8\PhpEtlBundle\Services\LoggerFactoryInterface: '@Oliverde8\PhpEtlBundle\Services\LoggerFactory'
+

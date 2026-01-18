@@ -21,8 +21,8 @@ class EtlExecutionRepository extends ServiceEntityRepository
 
     public function save(EtlExecution $execution)
     {
-        $this->_em->persist($execution);
-        $this->_em->flush($execution);
+        $this->getEntityManager()->persist($execution);
+        $this->getEntityManager()->flush($execution);
     }
 
     public function updateStepStats(EtlExecution $execution, string $stepStats)
@@ -36,10 +36,10 @@ class EtlExecutionRepository extends ServiceEntityRepository
             ->where('e.id = :executionId')
             ->setParameter('stepStats', $stepStats)
             ->setParameter('executionId', $execution->getId());
-        $query->execute();
+        $query->executeQuery();
 
         if ($connection->getTransactionNestingLevel() > 0) {
-            $query->getConnection()->commit();
+            $connection->commit();
         }
     }
 
