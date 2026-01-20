@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oliverde8\PhpEtlBundle\Twig;
 
 use Twig\Extension\AbstractExtension;

@@ -88,5 +88,4 @@ class DeleteFilesForOldExecutionOperation extends AbstractChainOperation impleme
 
         return $files;
     }
-
 }

@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Oliverde8\PhpEtlBundle\DependencyInjection;
-
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
