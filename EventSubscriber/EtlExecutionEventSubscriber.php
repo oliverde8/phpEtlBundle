@@ -15,26 +15,17 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class EtlExecutionEventSubscriber implements EventSubscriberInterface
 {
-    /** @var EntityManagerInterface */
-    protected $em;
-
-    /** @var ChainProcessorsManager */
-    protected $chainProcessorManager;
-
-    /** @var MessageBusInterface */
-    protected $messageBus;
-
     /**
      * EtlExecutionEventSubscriber constructor.
      * @param EntityManagerInterface $em
      * @param ChainProcessorsManager $chainProcessorManager
      * @param MessageBusInterface $messageBus
      */
-    public function __construct(EntityManagerInterface $em, ChainProcessorsManager $chainProcessorManager, ?MessageBusInterface $messageBus =null)
-    {
-        $this->em = $em;
-        $this->chainProcessorManager = $chainProcessorManager;
-        $this->messageBus = $messageBus;
+    public function __construct(
+        protected readonly EntityManagerInterface $em,
+        protected readonly ChainProcessorsManager $chainProcessorManager,
+        protected readonly ?MessageBusInterface $messageBus = null
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -48,7 +39,7 @@ class EtlExecutionEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function setChainDetails(BeforeEntityPersistedEvent $event)
+    public function setChainDetails(BeforeEntityPersistedEvent $event): void
     {
         $entity = $event->getEntityInstance();
         if (!$entity instanceof EtlExecution) {
@@ -60,7 +51,7 @@ class EtlExecutionEventSubscriber implements EventSubscriberInterface
         $entity->setStatus(EtlExecution::STATUS_WAITING);
     }
 
-    public function queueChainExecution(AfterEntityPersistedEvent $event)
+    public function queueChainExecution(AfterEntityPersistedEvent $event): void
     {
         $entity = $event->getEntityInstance();
         if (!$entity instanceof EtlExecution) {

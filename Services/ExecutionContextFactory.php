@@ -22,13 +22,10 @@ class ExecutionContextFactory implements ExecutionContextFactoryInterface
      * @param FileSystemFactory $fileSystemFactory
      */
     public function __construct(
-        ChainWorkDirManager $chainWorkDirManager,
-        LoggerFactory $loggerFactory,
-        FileSystemFactory $fileSystemFactory
+        private readonly ChainWorkDirManager $chainWorkDirManager,
+        private readonly LoggerFactory $loggerFactory,
+        private readonly FileSystemFactory $fileSystemFactory
     ) {
-        $this->chainWorkDirManager = $chainWorkDirManager;
-        $this->loggerFactory = $loggerFactory;
-        $this->fileSystemFactory = $fileSystemFactory;
     }
 
 

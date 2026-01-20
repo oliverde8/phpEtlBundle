@@ -19,16 +19,13 @@ class ExecuteCommand extends Command
     const ARGUMENT_PARAMS = "params";
     const OPTION_PRETTY = "pretty";
 
-    protected ChainProcessorsManager $chainProcessorsManager;
-
     /**
      * ExecuteCommand constructor.
      * @param ChainProcessorsManager $chainProcessorsManager
      */
-    public function __construct(ChainProcessorsManager $chainProcessorsManager)
+    public function __construct(protected readonly ChainProcessorsManager $chainProcessorsManager)
     {
         parent::__construct();
-        $this->chainProcessorsManager = $chainProcessorsManager;
     }
 
     protected function configure(): void

@@ -15,10 +15,8 @@ class LoggerFactory implements LoggerFactoryInterface
 
     private LoggerInterface $etlLogger;
 
-    public function __construct(ChainWorkDirManager $chainWorkDirManager, LoggerInterface $etlLogger)
+    public function __construct(private readonly ChainWorkDirManager $chainWorkDirManager, private readonly LoggerInterface $etlLogger)
     {
-        $this->chainWorkDirManager = $chainWorkDirManager;
-        $this->etlLogger = $etlLogger;
     }
 
     public function get(EtlExecution $execution): LoggerInterface

@@ -21,13 +21,13 @@ class EtlExecutionRepository extends ServiceEntityRepository
         parent::__construct($registry, EtlExecution::class);
     }
 
-    public function save(EtlExecution $execution)
+    public function save(EtlExecution $execution): void
     {
         $this->getEntityManager()->persist($execution);
         $this->getEntityManager()->flush($execution);
     }
 
-    public function updateStepStats(EtlExecution $execution, string $stepStats)
+    public function updateStepStats(EtlExecution $execution, string $stepStats): void
     {
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = $this->registry->getConnection();

@@ -10,14 +10,10 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ChainWorkDirManager
 {
-    private string $tmpBaseDir;
-
-    private Filesystem $tmpFileSystem;
-
-    public function __construct(string $tmpBaseDir, Filesystem $tmpFileSystem)
-    {
-        $this->tmpBaseDir = $tmpBaseDir;
-        $this->tmpFileSystem = $tmpFileSystem;
+    public function __construct(
+        private readonly string $tmpBaseDir,
+        private readonly Filesystem $tmpFileSystem
+    ) {
     }
 
     /**

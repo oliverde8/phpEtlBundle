@@ -53,7 +53,8 @@ class DeleteFilesForOldExecutionOperation extends AbstractChainOperation impleme
         return $item;
     }
 
-    protected function deleteDirectory(string $dir) {
+    protected function deleteDirectory(string $dir): bool
+    {
         if (!file_exists($dir)) {
             return true;
         }
@@ -71,7 +72,7 @@ class DeleteFilesForOldExecutionOperation extends AbstractChainOperation impleme
         return rmdir($dir);
     }
 
-    protected function getDirFiles(string $dir)
+    protected function getDirFiles(string $dir): array
     {
         if (!file_exists($dir) || !is_dir($dir)) {
             return [];

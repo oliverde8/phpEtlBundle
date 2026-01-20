@@ -12,7 +12,6 @@ use Oliverde8\PhpEtlBundle\Exception\UnknownChainException;
 use Oliverde8\PhpEtlBundle\Factory\ChainFactory;
 use Oliverde8\PhpEtlBundle\Repository\EtlExecutionRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use function Clue\StreamFilter\fun;
 
 class ChainProcessorsManager
 {
@@ -82,7 +81,7 @@ class ChainProcessorsManager
      *
      * @throws \Exception
      */
-    public function execute(string $chainName, iterable $iterator, array $params,  ?callable $observerCallback = null)
+    public function execute(string $chainName, iterable $iterator, array $params,  ?callable $observerCallback = null): void
     {
         $definition = $this->getRawDefinition($chainName);
         $definitionArray = $this->definitions[$chainName] ?? [];
