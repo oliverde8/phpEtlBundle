@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oliverde8\PhpEtlBundle\EventSubscriber;
 
 use Doctrine\ORM\EntityManagerInterface;

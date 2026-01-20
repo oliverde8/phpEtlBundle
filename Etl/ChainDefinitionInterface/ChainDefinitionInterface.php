@@ -1,8 +1,8 @@
 <?php
 
+declare (strict_types = 1);
+
 namespace Oliverde8\PhpEtlBundle\Etl\ChainDefinitionInterface;
-
-
 
 use Oliverde8\Component\PhpEtl\ChainConfig;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;

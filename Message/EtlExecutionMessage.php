@@ -1,7 +1,8 @@
 <?php
 
-namespace Oliverde8\PhpEtlBundle\Message;
+declare(strict_types=1);
 
+namespace Oliverde8\PhpEtlBundle\Message;
 
 class EtlExecutionMessage
 {
@@ -24,6 +25,4 @@ class EtlExecutionMessage
     {
         return $this->id;
     }
-
-
 }

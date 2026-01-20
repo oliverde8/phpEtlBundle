@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oliverde8\PhpEtlBundle\Services;
 
 use Oliverde8\Component\PhpEtl\ChainBuilderV2;
@@ -14,7 +16,6 @@ use function Clue\StreamFilter\fun;
 
 class ChainProcessorsManager
 {
-
     public function __construct(
         protected readonly EtlExecutionRepository $etlExecutionRepository,
         protected readonly LoggerFactory $loggerFactory,

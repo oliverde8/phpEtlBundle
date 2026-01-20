@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Oliverde8\PhpEtlBundle\DependencyInjection\Compiler;
-
 
 use Oliverde8\Component\PhpEtl\ChainBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
