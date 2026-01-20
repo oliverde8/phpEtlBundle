@@ -9,14 +9,14 @@ use Twig\TwigFilter;
 
 class TimeIntervalExtension extends AbstractExtension
 {
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('timeSpent', [$this, 'formatTime']),
         ];
     }
 
-    public function formatTime($time)
+    public function formatTime($time): string
     {
 
         $time = abs($time);

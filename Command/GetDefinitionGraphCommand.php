@@ -18,16 +18,14 @@ class GetDefinitionGraphCommand extends Command
 {
     const OPTION_GETURL = 'get-url';
 
-    protected ChainProcessorsManager $chainProcessorsManager;
-
     /**
      * ExecuteCommand constructor.
      * @param ChainProcessorsManager $chainProcessorsManager
      */
-    public function __construct(ChainProcessorsManager $chainProcessorsManager)
+    public function __construct(
+        protected readonly ChainProcessorsManager $chainProcessorsManager)
     {
         parent::__construct();
-        $this->chainProcessorsManager = $chainProcessorsManager;
     }
 
 

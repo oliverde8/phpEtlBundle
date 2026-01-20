@@ -8,13 +8,10 @@ use Psr\Log\LoggerInterface;
 
 class LoggerProxy implements LoggerInterface
 {
-    private LoggerInterface $logger;
-
     private ExecutionContext $executionContext;
 
-    public function __construct(LoggerInterface $logger)
+    public function __construct(private readonly LoggerInterface $logger)
     {
-        $this->logger = $logger;
     }
 
     /**

@@ -16,9 +16,8 @@ class FileSystemFactory implements FileSystemFactoryInterface
     /** @var LoggerInterface[] */
     private array $loggers = [];
 
-    public function __construct(ChainWorkDirManager $chainWorkDirManager)
+    public function __construct(private readonly ChainWorkDirManager $chainWorkDirManager)
     {
-        $this->chainWorkDirManager = $chainWorkDirManager;
     }
 
     public function get(EtlExecution $execution): FileSystemInterface

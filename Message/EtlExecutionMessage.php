@@ -6,16 +6,9 @@ namespace Oliverde8\PhpEtlBundle\Message;
 
 class EtlExecutionMessage
 {
-    /** @var int */
-    private $id;
-
-    /**
-     * EtlExecutionMessage constructor.
-     * @param int $id
-     */
-    public function __construct(int $id)
-    {
-        $this->id = $id;
+    public function __construct(
+        private readonly int $id
+    ) {
     }
 
     /**

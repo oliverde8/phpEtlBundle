@@ -12,24 +12,13 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class EtlExecutionHandler
 {
-    /** @var ChainProcessorsManager */
-    protected $chainProcessorManager;
-
-    /** @var EtlExecutionRepository */
-    protected $etlExecutionRepository;
-
-    /**
-     * EtlExecutionHandler constructor.
-     * @param ChainProcessorsManager $chainProcessorManager
-     * @param EtlExecutionRepository $etlExecutionRepository
-     */
-    public function __construct(ChainProcessorsManager $chainProcessorManager, EtlExecutionRepository $etlExecutionRepository)
-    {
-        $this->chainProcessorManager = $chainProcessorManager;
-        $this->etlExecutionRepository = $etlExecutionRepository;
+    public function __construct(
+        protected readonly ChainProcessorsManager $chainProcessorManager,
+        protected readonly EtlExecutionRepository $etlExecutionRepository
+    ) {
     }
 
-    public function __invoke(EtlExecutionMessage $message)
+    public function __invoke(EtlExecutionMessage $message): void
     {
         $execution = $this->etlExecutionRepository->find($message->getId());
         $this->chainProcessorManager->executeFromEtlEntity($execution);

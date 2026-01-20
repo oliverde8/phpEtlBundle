@@ -13,18 +13,14 @@ use Symfony\Component\Yaml\Yaml;
 
 class GetDefinitionCommand extends Command
 {
-    protected ChainProcessorsManager $chainProcessorsManager;
-
     /**
      * ExecuteCommand constructor.
      * @param ChainProcessorsManager $chainProcessorsManager
      */
-    public function __construct(ChainProcessorsManager $chainProcessorsManager)
+    public function __construct(protected readonly ChainProcessorsManager $chainProcessorsManager)
     {
         parent::__construct();
-        $this->chainProcessorsManager = $chainProcessorsManager;
     }
-
 
     protected function configure(): void
     {
