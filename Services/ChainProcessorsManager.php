@@ -106,7 +106,7 @@ class ChainProcessorsManager
      * Execute a chain from it's entity.
      *
      */
-    public function executeFromEtlEntity(EtlExecution $execution, iterable $iterator = null, ?callable $observerCallback = null): void
+    public function executeFromEtlEntity(EtlExecution $execution, ?iterable $iterator = null, ?callable $observerCallback = null): void
     {
         $chainName = $execution->getName();
         $logger = $this->loggerFactory->get($execution);
