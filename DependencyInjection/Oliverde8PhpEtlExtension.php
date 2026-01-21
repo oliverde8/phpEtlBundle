@@ -21,5 +21,6 @@ class Oliverde8PhpEtlExtension extends Extension
         $loader->load('services.yml');
         $loader->load('service-rule-transformers.yml');
         $loader->load('service-operation-factories.yml');
+        $loader->load('service-operations-v2.yml');
     }
 }
