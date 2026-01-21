@@ -11,6 +11,9 @@ use Psr\Log\LoggerInterface;
 
 class FileSystemFactory implements FileSystemFactoryInterface
 {
+    /** @var LoggerInterface[] */
+    private array $loggers = [];
+
     public function __construct(private readonly ChainWorkDirManager $chainWorkDirManager)
     {
     }
