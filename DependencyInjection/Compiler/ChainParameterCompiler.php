@@ -33,10 +33,10 @@ class ChainParameterCompiler implements CompilerPassInterface
 
         foreach ($etlFiles as $etlFile) {
             // Register file so that when it's modified in dev mode symfony empty caches automatially.
-            $container->fileExists($etlFile);
+            $container->fileExists($etlFile->getRealPath());
 
             $etlName = str_replace(".yml", "", $etlFile->getBasename());
-            $ymlContent = file_get_contents($etlFile);
+            $ymlContent = file_get_contents($etlFile->getRealPath());
 
             $definitionsArray[$etlName] = Yaml::parse($ymlContent);
             $definitionsString[$etlName] = $ymlContent;

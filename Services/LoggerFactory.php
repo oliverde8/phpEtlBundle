@@ -10,8 +10,7 @@ use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
 use Psr\Log\LoggerInterface;
 
 class LoggerFactory implements LoggerFactoryInterface
-{
-    public function __construct(private readonly ChainWorkDirManager $chainWorkDirManager, private readonly LoggerInterface $etlLogger)
+{   public function __construct(private readonly ChainWorkDirManager $chainWorkDirManager, private readonly LoggerInterface $etlLogger)
     {
     }
 

@@ -1,0 +1,77 @@
+services:
+  # ChainBuilderV2 Operations
+  # These services are automatically discovered by ChainBuilderV2Compiler
+  # which creates GenericChainFactory instances for each operation.
+  #
+  # The compiler automatically:
+  # - Discovers all services implementing ConfigurableChainOperationInterface
+  # - Identifies the config class from the constructor
+  # - Resolves all constructor dependencies at compile time
+  # - Creates a GenericChainFactory for each operation with resolved dependencies
+  # - Skips injection for $config, $chainBuilder, and $flavor (handled by the factory)
+
+  #
+  # Low Level Chain Operations
+  #
+  Oliverde8\Component\PhpEtl\ChainOperation\ChainSplitOperation:
+    autowire: true
+
+  Oliverde8\Component\PhpEtl\ChainOperation\ChainRepeatOperation:
+    autowire: true
+
+  Oliverde8\Component\PhpEtl\ChainOperation\ChainMergeOperation:
+    autowire: true
+
+  Oliverde8\Component\PhpEtl\ChainOperation\FailSafeOperation:
+    autowire: true
+
+  #
+  # Extraction Operations
+  #
+  Oliverde8\Component\PhpEtl\ChainOperation\Extract\CsvExtractOperation:
+    autowire: true
+
+  Oliverde8\Component\PhpEtl\ChainOperation\Extract\JsonExtractOperation:
+    autowire: true
+
+  #
+  # Transformation Operations
+  #
+  Oliverde8\Component\PhpEtl\ChainOperation\Transformer\CallbackTransformerOperation:
+    autowire: true
+
+  Oliverde8\Component\PhpEtl\ChainOperation\Transformer\FilterDataOperation:
+    autowire: true
+    arguments:
+      $ruleApplier: '@Oliverde8\Component\RuleEngine\RuleApplier'
+
+  Oliverde8\Component\PhpEtl\ChainOperation\Transformer\RuleTransformOperation:
+    autowire: true
+    arguments:
+      $ruleApplier: '@Oliverde8\Component\RuleEngine\RuleApplier'
+
+  Oliverde8\Component\PhpEtl\ChainOperation\Transformer\SplitItemOperation:
+    autowire: true
+
+  Oliverde8\Component\PhpEtl\ChainOperation\Transformer\SimpleHttpOperation:
+    autowire: true
+    arguments:
+      $client: '@http_client'
+
+  Oliverde8\Component\PhpEtl\ChainOperation\Transformer\LogOperation:
+    autowire: true
+
+  Oliverde8\Component\PhpEtl\ChainOperation\Transformer\ExternalFileProcessorOperation:
+    autowire: true
+
+  #
+  # Grouping Operations
+  #
+  Oliverde8\Component\PhpEtl\ChainOperation\Grouping\SimpleGroupingOperation:
+    autowire: true
+
+  #
+  # Load Operations
+  #
+  Oliverde8\Component\PhpEtl\ChainOperation\Loader\FileWriterOperation:
+    autowire: true
