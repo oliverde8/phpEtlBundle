@@ -10,12 +10,6 @@ use Oliverde8\PhpEtlBundle\Model\LoggerProxy;
 
 class ExecutionContextFactory implements ExecutionContextFactoryInterface
 {
-    private ChainWorkDirManager $chainWorkDirManager;
-
-    private LoggerFactory $loggerFactory;
-
-    private FileSystemFactory $fileSystemFactory;
-
     /**
      * @param ChainWorkDirManager $chainWorkDirManager
      * @param LoggerFactory $loggerFactory
