@@ -6,6 +6,7 @@ use Oliverde8\PhpEtlBundle\DependencyInjection\Compiler\ChainBuilderCompiler;
 use Oliverde8\PhpEtlBundle\DependencyInjection\Compiler\ChainBuilderV2Compiler;
 use Oliverde8\PhpEtlBundle\DependencyInjection\Compiler\ChainCompiler;
 use Oliverde8\PhpEtlBundle\DependencyInjection\Compiler\ChainParameterCompiler;
+use Oliverde8\PhpEtlBundle\DependencyInjection\Compiler\FlysystemExternalFileFinderCompiler;
 use Oliverde8\PhpEtlBundle\DependencyInjection\Compiler\RuleEngineCompiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -24,6 +25,7 @@ class Oliverde8PhpEtlBundle extends Bundle
         $container->addCompilerPass(new ChainParameterCompiler());
         $container->addCompilerPass(new ChainCompiler());
         $container->addCompilerPass(new ChainBuilderV2Compiler());
+        $container->addCompilerPass(new FlysystemExternalFileFinderCompiler());
     }
 
 }

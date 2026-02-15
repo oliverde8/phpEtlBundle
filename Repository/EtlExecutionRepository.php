@@ -38,7 +38,7 @@ class EtlExecutionRepository extends ServiceEntityRepository
             ->where('e.id = :executionId')
             ->setParameter('stepStats', $stepStats)
             ->setParameter('executionId', $execution->getId());
-        $query->execute();
+        $query->getQuery()->execute();
 
         if ($connection->getTransactionNestingLevel() > 0) {
             $connection->commit();

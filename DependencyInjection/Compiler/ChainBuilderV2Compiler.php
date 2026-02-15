@@ -6,6 +6,7 @@ namespace Oliverde8\PhpEtlBundle\DependencyInjection\Compiler;
 
 use Oliverde8\Component\PhpEtl\ChainBuilderV2;
 use Oliverde8\Component\PhpEtl\ChainOperation\ConfigurableChainOperationInterface;
+use Oliverde8\Component\PhpEtl\ChainOperation\Extract\ExternalFileFinderOperation;
 use Oliverde8\Component\PhpEtl\GenericChainFactory;
 use Oliverde8\Component\PhpEtl\OperationConfig\OperationConfigInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -40,30 +41,37 @@ class ChainBuilderV2Compiler implements CompilerPassInterface
                 continue;
             }
 
-            // Find the config class from the constructor
-            $configClass = $this->findConfigClass($class);
+            // Skip ExternalFileFinderOperation - it's handled by FlysystemExternalFileFinderCompiler
+            if (is_a($class, ExternalFileFinderOperation::class, true)) {
+                continue;
+            }
 
-            if (!$configClass) {
+            // Find the config class from the constructor
+            $configClasses = $this->findConfigClasses($class);
+
+            if (empty($configClasses)) {
                 continue;
             }
 
             // Resolve all dependencies for this operation at compile time
             $injections = $this->resolveInjections($class, $definition, $container);
 
-            // Create a GenericChainFactory for this operation with resolved dependencies
-            $factoryId = 'php_etl.factory.' . str_replace('\\', '_', $serviceId);
-            $factoryDefinition = new Definition(GenericChainFactory::class);
+            // Create a GenericChainFactory for each config class
+            foreach ($configClasses as $configClass) {
+                $factoryId = 'php_etl.factory.' . str_replace('\\', '_', $serviceId . '_' . $configClass);
+                $factoryDefinition = new Definition(GenericChainFactory::class);
 
-            // Set factory arguments: operationClassName, configClassName, flavor, injections
-            $factoryDefinition->setArguments([
-                $class,           // operationClassName
-                $configClass,     // configClassName
-                'default',        // flavor
-                $injections,      // resolved injections
-            ]);
+                // Set factory arguments: operationClassName, configClassName, flavor, injections
+                $factoryDefinition->setArguments([
+                    $class,           // operationClassName
+                    $configClass,     // configClassName
+                    'default',        // flavor
+                    $injections,      // resolved injections
+                ]);
 
-            $container->setDefinition($factoryId, $factoryDefinition);
-            $factories[] = new Reference($factoryId);
+                $container->setDefinition($factoryId, $factoryDefinition);
+                $factories[] = new Reference($factoryId);
+            }
         }
 
         // Set the factories as the second argument to ChainBuilderV2
@@ -201,6 +209,99 @@ class ChainBuilderV2Compiler implements CompilerPassInterface
         }
 
         return null;
+    }
+
+    /**
+     * Find all config classes for an operation.
+     * If the operation accepts an interface, returns all concrete implementations.
+     * If the operation accepts a concrete class, returns that class.
+     */
+    private function findConfigClasses(string $operationClass): array
+    {
+        try {
+            $reflection = new \ReflectionClass($operationClass);
+            $constructor = $reflection->getConstructor();
+
+            if (!$constructor) {
+                return [];
+            }
+
+            foreach ($constructor->getParameters() as $parameter) {
+                $type = $parameter->getType();
+
+                if (!$type instanceof \ReflectionNamedType) {
+                    continue;
+                }
+
+                $typeName = $type->getName();
+
+                // Check if this parameter type implements OperationConfigInterface
+                if (class_exists($typeName) && is_a($typeName, OperationConfigInterface::class, true)) {
+                    // Concrete class
+                    return [$typeName];
+                }
+
+                // Check if it's an interface that extends OperationConfigInterface
+                if (interface_exists($typeName) && is_a($typeName, OperationConfigInterface::class, true)) {
+                    // Find all concrete implementations
+                    return $this->findConcreteImplementations($typeName);
+                }
+            }
+
+            return [];
+        } catch (\ReflectionException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Find all concrete classes that implement a given interface by scanning the filesystem.
+     */
+    private function findConcreteImplementations(string $interfaceName): array
+    {
+        $implementations = [];
+
+        // Common paths where config classes are defined
+        $searchPaths = [
+            __DIR__ . '/../../../php-etl/src/Oliverde8/Component/PhpEtl/OperationConfig',
+            __DIR__ . '/../../Etl/OperationConfig',
+        ];
+
+        foreach ($searchPaths as $searchPath) {
+            if (!is_dir($searchPath)) {
+                continue;
+            }
+
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($searchPath, \RecursiveDirectoryIterator::SKIP_DOTS)
+            );
+
+            foreach ($iterator as $file) {
+                if ($file->getExtension() !== 'php') {
+                    continue;
+                }
+
+                // Extract namespace and class name from file
+                $content = file_get_contents($file->getPathname());
+
+                // Extract namespace
+                if (preg_match('/namespace\s+([^;]+);/', $content, $nsMatches)) {
+                    $namespace = $nsMatches[1];
+
+                    // Extract class name
+                    if (preg_match('/class\s+(\w+)/', $content, $classMatches)) {
+                        $className = $namespace . '\\' . $classMatches[1];
+
+                        // Check if class exists and implements the interface
+                        if (class_exists($className) && is_a($className, $interfaceName, true)) {
+                            $implementations[] = $className;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $implementations;
     }
 
     private function findConfigClass(string $operationClass): ?string
