@@ -32,13 +32,13 @@ class EtlExecutionRepository extends ServiceEntityRepository
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = $this->registry->getConnection();
 
-        $query = $connection->createQueryBuilder()
-            ->update('EtlExecution', 'e')
+        $query = $this->createQueryBuilder('e')
+            ->update()
             ->set('e.stepStats', ':stepStats')
             ->where('e.id = :executionId')
             ->setParameter('stepStats', $stepStats)
             ->setParameter('executionId', $execution->getId());
-        $query->executeQuery();
+        $query->execute();
 
         if ($connection->getTransactionNestingLevel() > 0) {
             $connection->commit();
