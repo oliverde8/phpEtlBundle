@@ -33,5 +33,7 @@ ExampleDefinition implements ChainDefinitionInterface
                 singleElement: true
             ))
             ->addLink(new CsvFileWriterConfig('output.csv'));
+
+        return $chainConfig;
     }
 }

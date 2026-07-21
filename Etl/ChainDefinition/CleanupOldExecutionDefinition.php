@@ -19,7 +19,7 @@ class CleanupOldExecutionDefinition implements ChainDefinitionInterface
 
     public function build(): ChainConfig
     {
-        return new ChainConfig()
+        return (new ChainConfig())
             ->addLink(new FindOldExecutionConfig((new \DateTime())->modify('-1 month')))
             ->addLink(new DeleteEntityForOldExecutionConfig())
             ->addLink(new DeleteFilesForOldExecutionConfig());

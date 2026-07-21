@@ -11,10 +11,10 @@
     }
   ],
   "require": {
-    "php": ">=8.2",
-    "oliverde8/php-etl": "^v1.2.0-alpha5|^v2.0.0-alpha5",
-    "symfony/framework-bundle": "^7.0|^8.0",
-    "symfony/messenger": "^7.0|^8.0",
+    "php": ">=8.3",
+    "oliverde8/php-etl": "^2.0",
+    "symfony/framework-bundle": "^7.4|^8.0",
+    "symfony/messenger": "^7.4|^8.0",
     "ext-json": "*"
   },
   "autoload": {
@@ -22,8 +22,13 @@
       "Oliverde8\\PhpEtlBundle\\": "."
     }
   },
+  "suggest": {
+    "easycorp/easyadmin-bundle": "To manage and run ETL executions from an admin UI (see oliverde8/php-etl-easyadmin-bundle); enables the EtlExecution admin event subscriber",
+    "league/flysystem": "To find and process files from external/remote filesystems (ExternalFileFinder / FlysystemExternalFileFinderCompiler)"
+  },
   "require-dev": {
     "symfony/monolog-bundle": "^3.7",
-    "symfony/console": "^7.0|^8.0"
+    "symfony/console": "^7.4|^8.0",
+    "phpunit/phpunit": "^11.0"
   }
 }
