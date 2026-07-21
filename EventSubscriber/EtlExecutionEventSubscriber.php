@@ -47,7 +47,9 @@ class EtlExecutionEventSubscriber implements EventSubscriberInterface
         }
 
         $definition = $this->chainProcessorManager->getRawDefinition($entity->getName());
-        $entity->setDefinition($definition);
+        // Legacy YAML definitions are strings; V2 definitions are objects - store the
+        // definition class so the entity's (string) "definition" column stays valid.
+        $entity->setDefinition(\is_string($definition) ? $definition : $definition::class);
         $entity->setStatus(EtlExecution::STATUS_WAITING);
     }
 
