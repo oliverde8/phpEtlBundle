@@ -22,5 +22,12 @@ class Oliverde8PhpEtlExtension extends Extension
         $loader->load('service-rule-transformers.yml');
         $loader->load('service-operation-factories.yml');
         $loader->load('service-operations-v2.yml');
+
+        // Optional real-time layer: only wire the Mercure publisher when the
+        // component is actually installed. Without it the bundle keeps the
+        // no-op publisher and the graph degrades to polling / static.
+        if (interface_exists(\Symfony\Component\Mercure\HubInterface::class)) {
+            $loader->load('services-mercure.yml');
+        }
     }
 }

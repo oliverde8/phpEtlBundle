@@ -10,6 +10,8 @@ services:
       - '../../DependencyInjection/'
       - '../..//Entity/'
       - '../../Tests/'
+      # Registered conditionally in services-mercure.yml (needs symfony/mercure).
+      - '../../Observability/MercureExecutionStatePublisher.php'
 
   # Register ETL operations separately with autowiring
   Oliverde8\PhpEtlBundle\Etl\Operation\:
@@ -41,4 +43,8 @@ services:
 
   Oliverde8\PhpEtlBundle\Services\FileSystemFactoryInterface: '@Oliverde8\PhpEtlBundle\Services\FileSystemFactory'
   Oliverde8\PhpEtlBundle\Services\LoggerFactoryInterface: '@Oliverde8\PhpEtlBundle\Services\LoggerFactory'
+
+  # Real-time state/log publisher: no-op by default, overridden to the Mercure
+  # implementation by services-mercure.yml when symfony/mercure is installed.
+  Oliverde8\PhpEtlBundle\Observability\ExecutionStatePublisherInterface: '@Oliverde8\PhpEtlBundle\Observability\NullExecutionStatePublisher'
 

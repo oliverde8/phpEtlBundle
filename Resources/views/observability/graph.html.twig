@@ -1,0 +1,27 @@
+{#
+  Reusable live execution graph widget (framework-agnostic).
+
+  Renders only the root container + configuration; the actual JS/CSS are loaded
+  by the host frontend (EasyAdmin does it via configureAssets(); other frontends
+  add the bundle's Resources/public/{js,css} + vendored cytoscape/dagre). This
+  keeps the widget usable from EasyAdmin, Sylius or a custom admin alike.
+
+  Required context:
+    execution      an Oliverde8\PhpEtlBundle\Entity\EtlExecution
+  Optional context:
+    mercure        {url, topic} to enable real-time push; omit/null to fall back
+                   to polling (running) or a static graph (finished)
+    poll_interval  poll cadence in ms (default 2000)
+#}
+<div
+    data-etl-graph
+    data-graph-url="{{ path('oliverde8_etl_execution_graph', {id: execution.id}) }}"
+    data-state-url="{{ path('oliverde8_etl_execution_state', {id: execution.id}) }}"
+    data-logs-url="{{ path('oliverde8_etl_execution_logs', {id: execution.id}) }}"
+    data-status="{{ execution.status }}"
+    data-poll-interval="{{ poll_interval|default(2000) }}"
+    {%- if mercure is defined and mercure %}
+    data-mercure-url="{{ mercure.url }}"
+    data-mercure-topic="{{ mercure.topic }}"
+    {%- endif %}
+></div>

@@ -1,3 +1,9 @@
+# 2.1.0
+
+- :star2: Live execution graph observability: framework-agnostic `Graph\ChainGraphBuilder` + `Graph\RunStateNormalizer`, read-only JSON endpoints (`/graph`, `/state`, `/logs`) and a dependency-light Cytoscape widget (`Resources/public` + `@Oliverde8PhpEtl/observability/graph.html.twig`) meant to be reused by any Symfony frontend (EasyAdmin, Sylius, custom).
+- :star2: Optional real-time updates over Mercure: auto-wired `MercureExecutionStatePublisher` when `symfony/mercure` is installed (a no-op publisher otherwise), pushing per-operation state and streaming logs from the worker as the chain runs. The graph degrades to polling / static without it.
+- :collision: Removed the old Mermaid `graph_reload` Stimulus controller (`assets/`), superseded by the new Cytoscape widget.
+
 # 2.0.0
 
 - :star2: Support for php-etl 2 (**Breaking Change**)

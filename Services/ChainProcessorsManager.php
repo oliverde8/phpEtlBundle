@@ -10,6 +10,8 @@ use Oliverde8\PhpEtlBundle\Entity\EtlExecution;
 use Oliverde8\PhpEtlBundle\Etl\ChainDefinitionInterface\ChainDefinitionInterface;
 use Oliverde8\PhpEtlBundle\Exception\UnknownChainException;
 use Oliverde8\PhpEtlBundle\Factory\ChainFactory;
+use Oliverde8\PhpEtlBundle\Observability\ExecutionStatePublisherInterface;
+use Oliverde8\PhpEtlBundle\Observability\NullExecutionStatePublisher;
 use Oliverde8\PhpEtlBundle\Repository\EtlExecutionRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
@@ -24,6 +26,7 @@ class ChainProcessorsManager
         #[AutowireIterator('etl.chain_definition')]
         /** @var ChainDefinitionInterface[] */
         protected readonly iterable $v2ChainDefinitions,
+        protected readonly ExecutionStatePublisherInterface $statePublisher = new NullExecutionStatePublisher(),
     ) {}
 
     /**
@@ -133,9 +136,20 @@ class ChainProcessorsManager
 
             // Start the process.
             $observerProcessTime = 0;
-            $processor->process($iterator, $params, function (array $operationStates, int $processedItems, int $returnedItems, bool $hasFinished = false) use ($observerCallback, &$observerProcessTime, $execution) {
+            $lastPublish = 0.0;
+            $processor->process($iterator, $params, function (array $operationStates, int $processedItems, int $returnedItems, bool $hasFinished = false) use ($observerCallback, &$observerProcessTime, &$lastPublish, $execution) {
                 if ($observerCallback) {
                     $observerCallback($operationStates, $processedItems, $returnedItems, $hasFinished);
+                }
+
+                // Real-time push (no-op unless a publisher such as Mercure is wired).
+                // Throttled to ~4/s so a fast chain does not flood the hub, and always
+                // flushed on the last observer frame. `finished` stays false here — the
+                // terminal status (success/failure) is pushed from the finally block.
+                $now = microtime(true);
+                if ($this->statePublisher->isEnabled() && ($hasFinished || ($now - $lastPublish) > 0.25)) {
+                    $this->statePublisher->publishState($execution, $operationStates, false);
+                    $lastPublish = $now;
                 }
 
                 if ((time() - $observerProcessTime) > 5 || $hasFinished) {
@@ -157,6 +171,16 @@ class ChainProcessorsManager
             $execution->setEndTime(new \DateTime());
             $execution->setRunTime(time() - $execution->getStartTime()->getTimestamp());
             $this->etlExecutionRepository->save($execution);
+
+            // Final push carrying the terminal status, so subscribers see success/failure
+            // and can close the stream.
+            if ($this->statePublisher->isEnabled()) {
+                $this->statePublisher->publishState(
+                    $execution,
+                    json_decode($execution->getStepStats() ?? '[]', true) ?: [],
+                    true,
+                );
+            }
         }
     }
 
