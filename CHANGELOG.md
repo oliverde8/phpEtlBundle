@@ -1,3 +1,10 @@
+# 2.1.0
+
+- :star2: Support for php-etl 2.1's new operations (`Grouping\BatchOperation`, `IfOperation`, `SwitchOperation`).
+- :star2: Live execution graph observability: t
+- :star2: Optional real-time updates over Mercure. The graph degrades to polling / static without it.
+- :collision: Removed the old Mermaid `graph_reload` Stimulus controller (`assets/`), superseded by the new Cytoscape widget.
+
 # 2.0.0
 
 - :star2: Support for php-etl 2 (**Breaking Change**)

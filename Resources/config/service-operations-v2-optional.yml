@@ -1,0 +1,24 @@
+services:
+  # ChainBuilderV2 operations that don't exist on every supported php-etl
+  # version. Each entry here must have a matching class_exists() guard in
+  # Oliverde8PhpEtlExtension::load() before this file is loaded — a Symfony
+  # service definition referencing a non-existent class fails at container
+  # compile time (unlike a plain instanceof check), so this can't just live in
+  # service-operations-v2.yml alongside the always-available operations.
+
+  # php-etl 2.1+ (Grouping/BatchOperation).
+  Oliverde8\Component\PhpEtl\ChainOperation\Grouping\BatchOperation:
+    autowire: true
+
+  # php-etl 2.1+ (If/Switch conditional branching). Both take RuleApplier the
+  # same way FilterDataOperation/RuleTransformOperation do in
+  # service-operations-v2.yml, so it needs the same explicit wiring here.
+  Oliverde8\Component\PhpEtl\ChainOperation\IfOperation:
+    autowire: true
+    arguments:
+      $ruleApplier: '@Oliverde8\Component\RuleEngine\RuleApplier'
+
+  Oliverde8\Component\PhpEtl\ChainOperation\SwitchOperation:
+    autowire: true
+    arguments:
+      $ruleApplier: '@Oliverde8\Component\RuleEngine\RuleApplier'
