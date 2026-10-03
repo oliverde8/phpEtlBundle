@@ -1,0 +1,11 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  # Loaded by the bundle extension only when symfony/mercure is installed.
+  # Overrides the default no-op publisher with the Mercure implementation.
+  Oliverde8\PhpEtlBundle\Observability\MercureExecutionStatePublisher: ~
+
+  Oliverde8\PhpEtlBundle\Observability\ExecutionStatePublisherInterface:
+    alias: Oliverde8\PhpEtlBundle\Observability\MercureExecutionStatePublisher

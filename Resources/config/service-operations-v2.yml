@@ -11,6 +11,18 @@ services:
   # - Skips injection for $config, $chainBuilder, and $flavor (handled by the factory)
 
   #
+  # Shared expression evaluator
+  #
+  # Used by every operation evaluating Symfony Expression Language
+  # (Log, SimpleHttp, Repeat, If, Switch, ExternalFileFinder). Registering it once
+  # lets all operations share the same parsed-expression cache, and lets
+  # applications swap in their own evaluator by overriding the alias.
+  Oliverde8\Component\PhpEtl\Expression\ExpressionEvaluator: ~
+
+  Oliverde8\Component\PhpEtl\Expression\ExpressionEvaluatorInterface:
+    alias: Oliverde8\Component\PhpEtl\Expression\ExpressionEvaluator
+
+  #
   # Low Level Chain Operations
   #
   Oliverde8\Component\PhpEtl\ChainOperation\ChainSplitOperation:
@@ -25,6 +37,16 @@ services:
   Oliverde8\Component\PhpEtl\ChainOperation\FailSafeOperation:
     autowire: true
 
+  Oliverde8\Component\PhpEtl\ChainOperation\IfOperation:
+    autowire: true
+    arguments:
+      $ruleApplier: '@Oliverde8\Component\RuleEngine\RuleApplier'
+
+  Oliverde8\Component\PhpEtl\ChainOperation\SwitchOperation:
+    autowire: true
+    arguments:
+      $ruleApplier: '@Oliverde8\Component\RuleEngine\RuleApplier'
+
   #
   # Extraction Operations
   #
@@ -32,6 +54,9 @@ services:
     autowire: true
 
   Oliverde8\Component\PhpEtl\ChainOperation\Extract\JsonExtractOperation:
+    autowire: true
+
+  Oliverde8\Component\PhpEtl\ChainOperation\Extract\CommandCsvExtractOperation:
     autowire: true
 
   #
@@ -64,10 +89,16 @@ services:
   Oliverde8\Component\PhpEtl\ChainOperation\Transformer\ExternalFileProcessorOperation:
     autowire: true
 
+  Oliverde8\Component\PhpEtl\ChainOperation\Transformer\ThrottleOperation:
+    autowire: true
+
   #
   # Grouping Operations
   #
   Oliverde8\Component\PhpEtl\ChainOperation\Grouping\SimpleGroupingOperation:
+    autowire: true
+
+  Oliverde8\Component\PhpEtl\ChainOperation\Grouping\BatchOperation:
     autowire: true
 
   #

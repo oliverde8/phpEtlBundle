@@ -76,6 +76,70 @@ will be available in the context of each link in the chain.
 ./bin/console etl:get-definition demo
 ```
 
+## Observability — live execution graph
+
+The bundle exposes a framework-agnostic **live execution graph**: the chain's
+topology plus per-operation state (items in/out, time, async in flight) and a
+streaming log tail. It is designed to be reused by any Symfony frontend
+(EasyAdmin, Sylius, a custom admin) — all the logic lives here, the frontend
+only mounts routes, loads the assets and renders one Twig partial.
+
+### How it works
+
+* `Graph\ChainGraphBuilder` turns a chain processor into a `{nodes, edges}` topology.
+* `Graph\RunStateNormalizer` turns the persisted/live `OperationState` into a
+  node-keyed state map (both use the same dotted-path node ids, incl. split branches).
+* `Controller\ExecutionObservabilityController` serves three read-only JSON
+  endpoints (guarded by `EtlExecutionVoter::VIEW`):
+  * `GET .../etl/executions/{id}/graph` — topology + last persisted state
+  * `GET .../etl/executions/{id}/state` — latest run-state (poll fallback)
+  * `GET .../etl/executions/{id}/logs?offset=` — incremental log tail
+* `Resources/public/{js,css}` ship a dependency-light Cytoscape widget (Cytoscape
+  and dagre are vendored under `Resources/public/vendor`), and
+  `@Oliverde8PhpEtl/observability/graph.html.twig` renders the container.
+
+### Wiring it into a frontend
+
+1. Mount the routes (any prefix; put them behind your admin firewall):
+   ```yaml
+   # config/routes/oliverde8_etl.yaml
+   oliverde8_php_etl_observability:
+       resource: '@Oliverde8PhpEtlBundle/Controller/'
+       type: attribute
+       prefix: /admin
+   ```
+2. Publish the assets: `bin/console assets:install public`.
+3. Load the assets on the page that shows the graph and render the partial:
+   ```twig
+   <link rel="stylesheet" href="/bundles/oliverde8phpetl/css/execution-graph.css">
+   <script src="/bundles/oliverde8phpetl/vendor/cytoscape.min.js"></script>
+   <script src="/bundles/oliverde8phpetl/vendor/dagre.min.js"></script>
+   <script src="/bundles/oliverde8phpetl/vendor/cytoscape-dagre.min.js"></script>
+   <script src="/bundles/oliverde8phpetl/js/execution-graph.js"></script>
+
+   {% include '@Oliverde8PhpEtl/observability/graph.html.twig' with { execution: execution } %}
+   ```
+   (The EasyAdmin bundle does exactly this for you on the execution detail page.)
+
+### Real-time updates (optional Mercure)
+
+The graph degrades gracefully by design:
+
+| Setup | Behaviour |
+|---|---|
+| `symfony/mercure-bundle` installed + hub configured | **live push** over Mercure (SSE) |
+| running execution, no Mercure | polls `/state` and `/logs` |
+| finished execution | fully static graph from persisted state |
+
+Nothing is required to get the static/poll graph. Install `symfony/mercure-bundle`
+to light up real-time — the bundle then auto-registers a Mercure publisher
+(`MercureExecutionStatePublisher`) and streams state + logs from the worker as the
+chain runs; otherwise a no-op publisher is used. Pass the hub's public URL + topic
+to the partial via a `mercure: {url, topic}` variable to enable the client side.
+
+> Real-time only applies to executions run asynchronously (a messenger worker);
+> with the `sync` transport the chain runs in-request and the graph is static.
+
 ### Adding your own chain operation
 
 To add your own chain operation you need 2 classes. The operation itself that we will call 
