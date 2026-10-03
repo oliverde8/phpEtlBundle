@@ -9,10 +9,17 @@ use Oliverde8\Component\PhpEtl\ChainConfig;
 use Oliverde8\Component\PhpEtl\ChainOperation\ChainOperationInterface;
 use Oliverde8\Component\PhpEtl\ChainOperation\ChainMergeOperation;
 use Oliverde8\Component\PhpEtl\ChainOperation\ChainSplitOperation;
+use Oliverde8\Component\PhpEtl\ChainOperation\IfOperation;
+use Oliverde8\Component\PhpEtl\ChainOperation\SwitchOperation;
 use Oliverde8\Component\PhpEtl\ChainProcessor;
+use Oliverde8\Component\PhpEtl\ChainProcessorInterface;
 use Oliverde8\Component\PhpEtl\ExecutionContextFactoryInterface;
+use Oliverde8\Component\PhpEtl\Expression\Expression;
 use Oliverde8\Component\PhpEtl\OperationConfig\ChainMergeConfig;
 use Oliverde8\Component\PhpEtl\OperationConfig\ChainSplitConfig;
+use Oliverde8\Component\PhpEtl\OperationConfig\IfConfig;
+use Oliverde8\Component\PhpEtl\OperationConfig\SwitchConfig;
+use Oliverde8\Component\RuleEngine\RuleApplier;
 use Oliverde8\PhpEtlBundle\Graph\ChainGraph;
 use Oliverde8\PhpEtlBundle\Graph\ChainGraphBuilder;
 use Oliverde8\PhpEtlBundle\Graph\GraphNode;
@@ -147,6 +154,57 @@ class ChainGraphBuilderTest extends TestCase
         self::assertSame('merge', $mergeNode->name);
     }
 
+    public function testIfBranchesAreVisibleAndMatchRunStateIds(): void
+    {
+        $ctxFactory = $this->createMock(ExecutionContextFactoryInterface::class);
+        $chainBuilder = $this->chainBuilderReturning(
+            new ChainProcessor(['then0' => $this->createMock(ChainOperationInterface::class)], $ctxFactory),
+            new ChainProcessor(['else0' => $this->createMock(ChainOperationInterface::class)], $ctxFactory),
+        );
+
+        $ifConfig = new IfConfig(new ChainConfig(), new Expression('data["ok"]'), new ChainConfig());
+        $if = new IfOperation($chainBuilder, $this->createMock(RuleApplier::class), $ifConfig);
+
+        $processor = new ChainProcessor([
+            'read' => $this->createMock(ChainOperationInterface::class),
+            'if' => $if,
+            'write' => $this->createMock(ChainOperationInterface::class),
+        ], $ctxFactory);
+
+        $graph = (new ChainGraphBuilder())->build($processor);
+
+        self::assertSame(['0', '1', '1.0.0', '1.1.0', '2'], $this->sortedNodeIds($graph));
+        self::assertSame($this->sortedNodeIds($graph), $this->sortedRunStateIds($processor));
+        self::assertSame(GraphNode::KIND_SPLIT, $this->nodeById($graph, '1')->kind);
+    }
+
+    public function testSwitchCasesAndDefaultAreVisibleAndMatchRunStateIds(): void
+    {
+        $ctxFactory = $this->createMock(ExecutionContextFactoryInterface::class);
+        $chainBuilder = $this->chainBuilderReturning(
+            new ChainProcessor(['caseA0' => $this->createMock(ChainOperationInterface::class)], $ctxFactory),
+            new ChainProcessor(['caseB0' => $this->createMock(ChainOperationInterface::class)], $ctxFactory),
+            new ChainProcessor(['default0' => $this->createMock(ChainOperationInterface::class)], $ctxFactory),
+        );
+
+        $switchConfig = (new SwitchConfig(new ChainConfig()))
+            ->addCase(new ChainConfig(), new Expression('data["type"] == "a"'))
+            ->addCase(new ChainConfig(), new Expression('data["type"] == "b"'));
+        $switch = new SwitchOperation($chainBuilder, $this->createMock(RuleApplier::class), $switchConfig);
+
+        $processor = new ChainProcessor([
+            'read' => $this->createMock(ChainOperationInterface::class),
+            'switch' => $switch,
+            'write' => $this->createMock(ChainOperationInterface::class),
+        ], $ctxFactory);
+
+        $graph = (new ChainGraphBuilder())->build($processor);
+
+        self::assertSame(['0', '1', '1.0.0', '1.1.0', '1.2.0', '2'], $this->sortedNodeIds($graph));
+        self::assertSame($this->sortedNodeIds($graph), $this->sortedRunStateIds($processor));
+        self::assertSame(GraphNode::KIND_SPLIT, $this->nodeById($graph, '1')->kind);
+    }
+
     public function testAnAutoAssignedKeyIsNeverShownAsIfItWereAName(): void
     {
         // Mirrors what ChainConfig::addLink() actually produces once a named link
@@ -162,6 +220,30 @@ class ChainGraphBuilderTest extends TestCase
         $unnamed = $this->nodeById($graph, '1');
         self::assertNotSame('0', $unnamed->name);
         self::assertSame($unnamed->type, $unnamed->name);
+    }
+
+    /** Mocked ChainBuilderV2 whose createChain() hands out the given processors in order. */
+    private function chainBuilderReturning(ChainProcessorInterface ...$processors): ChainBuilderV2
+    {
+        $chainBuilder = $this->createMock(ChainBuilderV2::class);
+        $next = 0;
+        $chainBuilder->method('createChain')->willReturnCallback(
+            static function () use (&$next, $processors) {
+                return $processors[$next++];
+            }
+        );
+
+        return $chainBuilder;
+    }
+
+    /** @return string[] */
+    private function sortedRunStateIds(ChainProcessor $processor): array
+    {
+        $decoded = json_decode(json_encode($processor->initObserver()->getOperationStates()), true);
+        $ids = array_map('strval', array_keys((new RunStateNormalizer())->normalize($decoded)));
+        sort($ids, SORT_STRING);
+
+        return $ids;
     }
 
     /** @return string[] */

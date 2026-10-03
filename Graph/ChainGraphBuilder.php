@@ -20,12 +20,9 @@ use Oliverde8\Component\PhpEtl\ChainProcessorInterface;
  * each branch, and the main line continues from that operation's own node
  * (branches do not rejoin automatically).
  *
- * {@see SubChainsAwareOperationInterface} is only implemented by php-etl 2.1+
- * (Split and Merge so far). Checking `instanceof` against it is safe even when
- * the bundle runs against php-etl 2.0 — PHP evaluates instanceof as false for
- * a non-existent class rather than erroring — so this bundle keeps working
- * with either version; branch-holding operations older than 2.1 just render
- * as a single opaque node, same as before.
+ * Any operation implementing {@see SubChainsAwareOperationInterface} is drawn
+ * with its branches: split, merge, repeat, fail-safe (incl. its onFailure
+ * chain), if (then/else) and switch (each case, then default).
  */
 final class ChainGraphBuilder
 {

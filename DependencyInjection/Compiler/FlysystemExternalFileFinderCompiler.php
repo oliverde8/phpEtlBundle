@@ -7,6 +7,7 @@ namespace Oliverde8\PhpEtlBundle\DependencyInjection\Compiler;
 use League\Flysystem\FilesystemOperator;
 use Oliverde8\Component\PhpEtl\ChainBuilderV2;
 use Oliverde8\Component\PhpEtl\ChainOperation\Extract\ExternalFileFinderOperation;
+use Oliverde8\Component\PhpEtl\Expression\ExpressionEvaluatorInterface;
 use Oliverde8\Component\PhpEtl\GenericChainFactory;
 use Oliverde8\Component\PhpEtl\Model\File\FlySystemFileSystem;
 use Oliverde8\Component\PhpEtl\OperationConfig\Extract\ExternalFileFinderConfig;
@@ -63,7 +64,10 @@ class FlysystemExternalFileFinderCompiler implements CompilerPassInterface
                 ExternalFileFinderOperation::class,  // operationClassName
                 ExternalFileFinderConfig::class,     // configClassName
                 $flavor,                              // flavor
-                ['fileSystem' => new Reference($fileSystemId)], // injections
+                [                                     // injections
+                    'fileSystem' => new Reference($fileSystemId),
+                    'expressionEvaluator' => new Reference(ExpressionEvaluatorInterface::class),
+                ],
             ]);
 
             $container->setDefinition($factoryId, $factoryDefinition);

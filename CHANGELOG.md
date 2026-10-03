@@ -1,7 +1,10 @@
 # 2.1.0
 
-- :star2: Support for php-etl 2.1's new operations (`Grouping\BatchOperation`, `IfOperation`, `SwitchOperation`).
-- :star2: Live execution graph observability: t
+- :exclamation: Requires php-etl `^2.1`; support for php-etl 2.0 is dropped.
+- :star2: Support for php-etl 2.1's new operations: `BatchConfig`, `IfConfig`, `SwitchConfig`, `ThrottleConfig` and `CommandCsvExtractConfig`.
+- :star2: php-etl's `ExpressionEvaluator` is registered as a shared service (aliased to `ExpressionEvaluatorInterface`) and injected into every operation using expressions, so they share one parsed-expression cache and can be customized by overriding the alias.
+- :star2: Live execution graph shows the branches of every sub-chain operation: split, merge, repeat, fail-safe (incl. `onFailure`), if and switch.
+- :star2: Live execution graph observability: framework-agnostic `Graph\ChainGraphBuilder` + `Graph\RunStateNormalizer`, read-only JSON endpoints (`/graph`, `/state`, `/logs`) and a dependency-light Cytoscape widget (`Resources/public` + `@Oliverde8PhpEtl/observability/graph.html.twig`) meant to be reused by any Symfony frontend (EasyAdmin, Sylius, custom).
 - :star2: Optional real-time updates over Mercure. The graph degrades to polling / static without it.
 - :collision: Removed the old Mermaid `graph_reload` Stimulus controller (`assets/`), superseded by the new Cytoscape widget.
 
