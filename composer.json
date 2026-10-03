@@ -3,7 +3,6 @@
   "type": "library",
   "description": "Allow usage of the PHP-ETL library in symfony framework.",
   "license": "MIT",
-  "keywords": ["symfony-ux"],
   "authors": [
     {
       "name": "Oliver de Cramer",
