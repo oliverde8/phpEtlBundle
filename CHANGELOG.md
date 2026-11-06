@@ -1,3 +1,7 @@
+# 2.1.1
+
+- :wrench: Fix legacy YAML `split` and `repeat` operations: they were wired to the new php-etl 2 operation classes and now use the V1 versions (`ChainSplitOperationV1`, `ChainRepeatOperationV1`). (#21, thanks @dvasconcelos)
+
 # 2.1.0
 
 - :exclamation: Requires php-etl `^2.1`; support for php-etl 2.0 is dropped.
